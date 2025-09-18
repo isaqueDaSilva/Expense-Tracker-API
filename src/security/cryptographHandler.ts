@@ -10,8 +10,8 @@ const cipherAlgorithm = 'aes-256-gcm';
 export function generatePublicKey(): KeyDTO {
     const p384Key = createECDH(keyType);
     p384Key.generateKeys();
-    const privateKey = p521Key.getPrivateKey();
-    const publicKey = p521Key.getPublicKey();
+    const privateKey = p384Key.getPrivateKey();
+    const publicKey = p384Key.getPublicKey();
     const id = randomUUID();
     const cache = SecurityKeyCache.getInstance();
     cache.setKey(id, privateKey);
