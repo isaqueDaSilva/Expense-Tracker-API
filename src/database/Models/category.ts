@@ -1,7 +1,8 @@
 export const categoryTableSchema = `
     CREATE TABLE IF NOT EXISTS categories (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid() UNIQUE NOT NULL,
-        title VARCHAR(30) UNIQUE NOT NULL,
+        title VARCHAR(30) NOT NULL,
+        created_by UUID REFERENCES users(id) ON DELETE SET NULL DEFAULT NULL,
         created_at DATE NOT NULL DEFAULT CURRENT_DATE
     );
 `
