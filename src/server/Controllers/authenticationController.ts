@@ -67,12 +67,18 @@ export async function signin(request: IncomingMessage, response: ServerResponse)
     }
 };
 
+export function verifyToken(request: IncomingMessage): {value: string, userID: string} {
+    const token = jwtAuthenticationHandler(request);
+    const userID = verifyJWT(token);
+
+    return {value: token, userID: userID};
+}
+
 export async function signout(request: IncomingMessage, response: ServerResponse) {
     try {
-        const token = jwtAuthenticationHandler(request);
-        const userID = verifyJWT(token);
-        await updateUserLoginStatus(userID, false);
-        await disableToken(token); // Store the token in the disabled tokens list
+        const token = verifyToken(request)
+        await updateUserLoginStatus(token.userID, false);
+        await disableToken(token.value); // Store the token in the disabled tokens list
         response.statusCode = 200;
         response.setHeader('Content-Type', 'application/json');
         response.end(JSON.stringify({ message: "User signed out successfully" }));
@@ -86,10 +92,9 @@ export async function signout(request: IncomingMessage, response: ServerResponse
 
 export async function removeUser(request: IncomingMessage, response: ServerResponse) {
     try {
-        const token = jwtAuthenticationHandler(request);
-        const userID = verifyJWT(token);
-        await deleteUser(userID);
-        await disableToken(token); // Store the token in the disabled tokens list
+        const token = verifyToken(request);
+        await deleteUser(token.userID);
+        await disableToken(token.value); // Store the token in the disabled tokens list
         response.statusCode = 200;
         response.setHeader('Content-Type', 'application/json');
         response.end(JSON.stringify({ message: "User deleted successfully" }));
