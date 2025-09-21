@@ -30,7 +30,7 @@ export async function getUserByEmail(email: string): Promise<{userResponse: Read
     const foundUser = result[0];
 
     if (typeof foundUser === "object") {
-        return {userResponse: foundUser.value as ReadUserDTO, passwordHash: foundUser.value.passwordHash};
+        return {userResponse: foundUser.value as ReadUserDTO, passwordHash: foundUser.value.passwordHash as string};
     } else {
         throw new Error("User not found");
     }
