@@ -1,11 +1,11 @@
 import type { IncomingMessage, ServerResponse } from "http";
-import { decodeJSONBody } from "./Services/jsonDecoder";
-import { decodeCreateUserDTO } from "./Services/User/decodeUser";
-import { hashPassword, comparePassword } from "./Services/passwordHash";
-import { createUser, getUserByEmail, updateUserLoginStatus, deleteUser } from "./Services/User/userCRUD";
-import { createJWT, verifyJWT, jwtAuthenticationHandler } from "./Services/jwtService";
-import { basicAuthenticationHandler } from "./Services/basicAuthenticantionHandler";
-import { disableToken } from "./Services/Tokens/tokenCRUD";
+import { decodeJSONBody } from "./services/jsonDecoder";
+import { decodeCreateUserDTO } from "./services/user/decodeUser";
+import { hashPassword, comparePassword } from "./services/passwordHash";
+import { createUser, getUserByEmail, updateUserLoginStatus, deleteUser } from "./services/user/userCRUD";
+import { createJWT, verifyJWT, jwtAuthenticationHandler } from "./services/jwtService";
+import { basicAuthenticationHandler } from "./services/basicAuthenticantionHandler";
+import { disableToken } from "./services/tokens/tokenCRUD";
 
 export async function signup(request: IncomingMessage, response: ServerResponse) {
     try {

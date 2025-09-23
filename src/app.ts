@@ -1,5 +1,5 @@
-import { databaseConfig } from "./database/Configuration/databaseConfig";
-import { databaseMigration } from "./database/Migration/databaseMigration";
+import { databaseConfig } from "./database/configuration/databaseConfig";
+import { databaseMigration } from "./database/migration/databaseMigration";
 import { server } from "./server/server";
 import * as dotenv from 'dotenv';
 

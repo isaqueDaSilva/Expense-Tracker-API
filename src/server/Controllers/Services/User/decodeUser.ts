@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { passwordValidation } from "../../Services/passwordValidation";
+import { passwordValidation } from "../passwordValidation";
 import type { CreateUserDTO } from "../../dto/userDTO";
 
 // Function to decode and validate CreateUserDTO from JSON string

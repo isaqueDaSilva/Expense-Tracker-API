@@ -1,8 +1,8 @@
 import type { NeonQueryFunction } from "@neondatabase/serverless";
-import { usersTableSchema } from "../Models/user";
-import { tasksTableSchema } from "../Models/tasks";
-import { categoryTableSchema, groceries, leisure, electronics, utilities, clothing, health } from "../Models/category";
-import { disabledTokensTableSchema } from "../Models/disabledTokens";
+import { usersTableSchema } from "../models/user";
+import { tasksTableSchema } from "../models/tasks";
+import { categoryTableSchema, groceries, leisure, electronics, utilities, clothing, health } from "../models/category";
+import { disabledTokensTableSchema } from "../models/disabledTokens";
 
 export async function databaseMigration(database: NeonQueryFunction<false, false>) {
     await database.query(usersTableSchema);
