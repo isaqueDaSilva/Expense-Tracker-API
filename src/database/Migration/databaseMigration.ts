@@ -3,6 +3,7 @@ import { usersTableSchema } from "../models/user";
 import { tasksTableSchema } from "../models/tasks";
 import { categoryTableSchema, groceries, leisure, electronics, utilities, clothing, health } from "../models/category";
 import { disabledTokensTableSchema } from "../models/disabledTokens";
+import { database } from "../../app";
 
 export async function databaseMigration(database: NeonQueryFunction<false, false>) {
     await database.query(usersTableSchema);
@@ -16,3 +17,6 @@ export async function databaseMigration(database: NeonQueryFunction<false, false
     await database.query(tasksTableSchema);
     await database.query(disabledTokensTableSchema);
 }
+
+// Run migration
+databaseMigration(database)

@@ -1,5 +1,4 @@
 import { databaseConfig } from "./database/configuration/databaseConfig";
-import { databaseMigration } from "./database/migration/databaseMigration";
 import { server } from "./server/server";
 import * as dotenv from 'dotenv';
 
@@ -7,7 +6,6 @@ dotenv.config();
 
 const databaseURL = process.env.DATABASE_URL;
 export const database = databaseConfig(databaseURL);
-databaseMigration(database);
 
 const port = process.env.PORT || 3000;
 const hostname = process.env.HOSTNAME || '127.0.0.1'
