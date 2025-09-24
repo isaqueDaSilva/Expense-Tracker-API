@@ -19,9 +19,9 @@ export interface ReadTaskDTO {
 };
 
 export interface UpdateTaskDTO {
-    title?: string;
-    description?: string;
-    value?: number;
-    date?: string;
-    category?: string | null;
+    title?: string | undefined;
+    description?: string | undefined;
+    value?: number | undefined;
+    date?: string | undefined;
+    category?: string | undefined;
 };
