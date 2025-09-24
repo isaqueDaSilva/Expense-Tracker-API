@@ -20,7 +20,6 @@ export function createJWT(userID: string): string {
         return jwt.sign(payload, secret);
     } else {
         throw new Error("Internal server error.");
-        console.log("JWT secret is not defined.");
     }
 }
 
@@ -36,7 +35,6 @@ export function verifyJWT(token: string): string {
         }
     } else {
         throw new Error("Internal server error.");
-        console.log("JWT secret is not defined.");
     }
 }
 
