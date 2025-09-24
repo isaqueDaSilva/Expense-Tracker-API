@@ -8,15 +8,15 @@ export async function createTask(CreateTaskDTO: CreateTaskDTO, userID: string): 
     let index = 1;
 
     for (const [key, value] of Object.entries(CreateTaskDTO)) {
-        fields.push(key); // Insert field name
-        values.push(value); // Insert field value
-        indices.push(`$${index}`); // Insert placeholder
-        index++; // Increment index for the next placeholder
+    fields.push(key); // Insert field name;
+    values.push(value); // Insert field value;
+    indices.push(`$${index}`); // Insert placeholder;
+    index++; // Increment index for the next placeholder;
     }
 
     values.push(userID); // Add userID for the user_id field 
-    fields.push('user_id'); // Add user_id field
-    indices.push(`$${index}`); // Add placeholder for user_id
+    fields.push('user_id'); // Add user_id field;
+    indices.push(`$${index}`); // Add placeholder for user_id;
 
     const newTask = `
         INSERT INTO tasks (${fields.join(', ')})
@@ -91,7 +91,7 @@ export async function getTasksByDate(userID: string, initialDate: string, finalD
 
         const values = [userID, initialDate, finalDate, tasksPerPage, offset];
         const result = await database.query(getTasks, values);
-        return result.map(row => row.value as ReadTaskDTO)
+    return result.map(row => row.value as ReadTaskDTO);
     } else {
         throw new Error("Invalid page number. Page number must be 1 or greater.");
     }

@@ -6,4 +6,4 @@ export function databaseConfig(databaseURL: string | undefined): NeonQueryFuncti
     } else {
         throw new Error("DATABASE_URL is not defined in environment variables");
     }
-}
+};

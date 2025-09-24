@@ -65,7 +65,7 @@ export async function signin(request: IncomingMessage, response: ServerResponse)
 
 export async function signout(request: IncomingMessage, response: ServerResponse) {
     try {
-        const token = await verifyToken(request)
+        const token = await verifyToken(request);
         await updateUserLoginStatus(token.userID, false);
         await disableToken(token.value); // Store the token in the disabled tokens list
         setResponse(response, 204, "message", "User signed out successfully" );

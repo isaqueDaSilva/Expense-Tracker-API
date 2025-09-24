@@ -5,6 +5,7 @@ export async function disableToken(token: string) {
         INSERT INTO disabled_tokens (raw_token_value)
         VALUES ($1);
     `;
+
     const values = [token];
     await database.query(newToken, values);
 };
@@ -15,8 +16,8 @@ export async function isTokenValid(rawToken: string): Promise<boolean> {
         WHERE raw_token_value = $1
     `;
 
-    const values = [rawToken]
-    const result = await database.query(getToken, values)
+    const values = [rawToken];
+    const result = await database.query(getToken, values);
 
     if (result.length == 0) {
         return true

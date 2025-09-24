@@ -55,4 +55,4 @@ export function decodeUpdateTaskDTO(jsonString: string): UpdateTaskDTO {
         }).optional(),
         category: z.uuid("Invalid category ID").optional()
     }).parse(parsed);
-}
+};

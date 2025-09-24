@@ -21,7 +21,7 @@ export function createJWT(userID: string): string {
     } else {
         throw new Error("Internal server error.");
     }
-}
+};
 
 export function verifyJWT(token: string): string {
     const secret = process.env.JWT_SECRET;
@@ -36,7 +36,7 @@ export function verifyJWT(token: string): string {
     } else {
         throw new Error("Internal server error.");
     }
-}
+};
 
 export function jwtAuthenticationHandler(request: IncomingMessage) {
     const authHeader = request.headers['authorization'];
@@ -52,4 +52,4 @@ export function jwtAuthenticationHandler(request: IncomingMessage) {
     }
 
     return token;
-}
+};

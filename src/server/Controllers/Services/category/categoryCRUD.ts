@@ -8,18 +8,18 @@ export async function createCategory(categoryTitle: string, userID: string): Pro
 
     const values = [categoryTitle];
     const result = await database.query(newCategory, values);
-    const category = result[0]
+    const category = result[0];
 
     if (typeof category === "object") {
-        return category.value as ReadCategoryDTO
+        return category.value as ReadCategoryDTO;
     } else {
-        throw new Error("Failed to create new category.")
+        throw new Error("Failed to create new category.");
     }
-}
+};
 
 export async function getAllCategories(userID: string, currentPage: number): Promise<ReadCategoryDTO[]> {
     if (currentPage >= 1) {
-        const categoryPerPage = 10
+        const categoryPerPage = 10;
         const offset = (currentPage - 1) * categoryPerPage;
 
         const getCategories = `
@@ -34,7 +34,7 @@ export async function getAllCategories(userID: string, currentPage: number): Pro
         const result = await database.query(getCategories, values);
         return result.map(row => row.value as ReadCategoryDTO);
     } else {
-        throw new Error("Invalid page number. Page number must be 1 or greater.")
+        throw new Error("Invalid page number. Page number must be 1 or greater.");
     }
 };
 
@@ -66,7 +66,7 @@ export async function updateCategory(userID: string, categoryID: string, newTitl
 
     const values = [newTitle, categoryID, userID];
     const result = await database.query(updateCategory, values);
-    const updatedCategory = result [0]
+    const updatedCategory = result [0];
 
     if (typeof updatedCategory === "object") {
         return updatedCategory.value as ReadCategoryDTO;
@@ -75,7 +75,7 @@ export async function updateCategory(userID: string, categoryID: string, newTitl
     }
 };
 
-export async function deleteCategory(categoryID: string, userID: string): Promise<void> {
+export async function deleteCategory(categoryID: string, userID: string) {
     const deleteCategory = `
         DELETE FROM categories
         WHERE id = $1 AND user_id = $2
@@ -83,4 +83,4 @@ export async function deleteCategory(categoryID: string, userID: string): Promis
 
     const values = [categoryID, userID];
     await database.query(deleteCategory, values);
-}
+};
