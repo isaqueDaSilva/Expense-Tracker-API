@@ -1,11 +1,11 @@
-import { request, type IncomingMessage, type ServerResponse } from "http";
-import { verifyToken } from "./services/verifyToken";
-import { decodeJSONBody } from "./services/jsonDecoder";
-import { decodeCreateTaskDTO, decodeUpdateTaskDTO } from "./services/tasks/decodeTaskDTO";
-import { createTask, deleteTask, getAllTasks, getAllTasksByCategory, getTasksByDate, getTaskByID, updateTask } from "./services/tasks/tasksCRUD";
-import { getParameterURL } from "./services/getParameterURL";
-import { isPageValid } from "./services/isPageValid";
-import { setResponse } from "./services/setResponse";
+import type { IncomingMessage, ServerResponse } from "http";
+import { verifyToken } from "./services/verifyToken.js";
+import { decodeJSONBody } from "./services/jsonDecoder.js";
+import { decodeCreateTaskDTO, decodeUpdateTaskDTO } from "./services/tasks/decodeTaskDTO.js";
+import { createTask, deleteTask, getAllTasks, getAllTasksByCategory, getTasksByDate, getTaskByID, updateTask } from "./services/tasks/tasksCRUD.js";
+import { getParameterURL } from "./services/getParameterURL.js";
+import { isPageValid } from "./services/isPageValid.js";
+import { setResponse } from "./services/setResponse.js";
 
 export async function createNewTask(request: IncomingMessage, response: ServerResponse) {
     try {

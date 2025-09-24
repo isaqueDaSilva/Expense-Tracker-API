@@ -1,4 +1,4 @@
-import { database } from "../../../../app";
+import { database } from "../../../../app.js";
 
 export async function disableToken(token: string) {
     const newToken = `

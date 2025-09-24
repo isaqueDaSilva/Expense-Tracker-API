@@ -1,13 +1,13 @@
 import type { IncomingMessage, ServerResponse } from "http";
-import { decodeJSONBody } from "./services/jsonDecoder";
-import { decodeCreateUserDTO } from "./services/user/decodeUser";
-import { hashPassword, comparePassword } from "./services/passwordHash";
-import { createUser, getUserByEmail, updateUserLoginStatus, deleteUser } from "./services/user/userCRUD";
-import { createJWT } from "./services/jwtService";
-import { basicAuthenticationHandler } from "./services/basicAuthenticantionHandler";
-import { disableToken } from "./services/tokens/tokenCRUD";
-import { setResponse } from "./services/setResponse";
-import { verifyToken } from "./services/verifyToken";
+import { decodeJSONBody } from "./services/jsonDecoder.js";
+import { decodeCreateUserDTO } from "./services/user/decodeUser.js";
+import { hashPassword, comparePassword } from "./services/passwordHash.js";
+import { createUser, getUserByEmail, updateUserLoginStatus, deleteUser } from "./services/user/userCRUD.js";
+import { createJWT } from "./services/jwtService.js";
+import { basicAuthenticationHandler } from "./services/basicAuthenticantionHandler.js";
+import { disableToken } from "./services/tokens/tokenCRUD.js";
+import { setResponse } from "./services/setResponse.js";
+import { verifyToken } from "./services/verifyToken.js";
 
 export async function signup(request: IncomingMessage, response: ServerResponse) {
     try {

@@ -15,6 +15,8 @@
   "author": "Isaque Machado",
   "license": "MIT",
   "devDependencies": {
+    "@tsconfig/node22": "^22.0.2",
+    "@tsconfig/node23": "^23.0.2",
     "@types/bcrypt": "^6.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.5.1",

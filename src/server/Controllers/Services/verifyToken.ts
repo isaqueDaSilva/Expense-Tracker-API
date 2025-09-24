@@ -1,6 +1,6 @@
 import type { IncomingMessage } from "http";
-import { jwtAuthenticationHandler, verifyJWT } from "./jwtService";
-import { disableToken, isTokenValid } from "./tokens/tokenCRUD";
+import { jwtAuthenticationHandler, verifyJWT } from "./jwtService.js";
+import { disableToken, isTokenValid } from "./tokens/tokenCRUD.js";
 
 export async function verifyToken(request: IncomingMessage): Promise<{value: string, userID: string}> {
     const token = jwtAuthenticationHandler(request);

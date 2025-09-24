@@ -1,5 +1,5 @@
 import { json, z } from 'zod'
-import type { CategoryDTO } from '../../dto/categoryDTO';
+import type { CategoryDTO } from '../../dto/categoryDTO.js';
 
 function decodeCategoryDTO(jsonString: string, isCreation: boolean): CategoryDTO {
     const parsed = JSON.parse(jsonString, (key, value) => {

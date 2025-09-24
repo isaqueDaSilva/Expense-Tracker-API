@@ -1,5 +1,5 @@
-import { database } from "../../../../app";
-import type { ReadUserDTO } from "../../dto/userDTO";
+import { database } from "../../../../app.js";
+import type { ReadUserDTO } from "../../dto/userDTO.js";
 
 export async function createUser(email: string, username: string, hashedPassword: string): Promise<ReadUserDTO> {
     const newUser = `

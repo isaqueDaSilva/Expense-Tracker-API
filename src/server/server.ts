@@ -1,7 +1,7 @@
 import { createServer } from "http";
-import { removeUser, signin, signout, signup } from "./controllers/authenticationController";
-import { createNewCategory, deleteCategoryWithID, getCategories, getCategoryById, updateCategoryWithId } from "./controllers/categoryController";
-import { createNewTask, getAllTasksByDate, getTasks, getTasksByCategory, getTask, updateCurrentTask, deleteCurrentTask } from "./controllers/tasksController";
+import { removeUser, signin, signout, signup } from "./controllers/authenticationController.js";
+import { createNewCategory, deleteCategoryWithID, getCategories, getCategoryById, updateCategoryWithId } from "./controllers/categoryController.js";
+import { createNewTask, getAllTasksByDate, getTasks, getTasksByCategory, getTask, updateCurrentTask, deleteCurrentTask } from "./controllers/tasksController.js";
 
 
 const hostname = '127.0.0.1';

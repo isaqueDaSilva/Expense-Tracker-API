@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { passwordValidation } from "../passwordValidation";
-import type { CreateUserDTO } from "../../dto/userDTO";
+import { passwordValidation } from "../passwordValidation.js";
+import type { CreateUserDTO } from "../../dto/userDTO.js";
 
 // Function to decode and validate CreateUserDTO from JSON string
 export function decodeCreateUserDTO(jsonString: string): CreateUserDTO {

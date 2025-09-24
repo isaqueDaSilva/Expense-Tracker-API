@@ -1,5 +1,5 @@
 import { ServerResponse } from "http";
-import { setResponse } from "./setResponse";
+import { setResponse } from "./setResponse.js";
 
 export function isPageValid(page: number, response: ServerResponse): boolean {
     if (isNaN(page) || page < 1) {

@@ -1,5 +1,5 @@
-import { databaseConfig } from "./database/configuration/databaseConfig";
-import { server } from "./server/server";
+import { databaseConfig } from "./database/configuration/databaseConfig.js";
+import { server } from "./server/server.js";
 import * as dotenv from 'dotenv';
 
 dotenv.config();

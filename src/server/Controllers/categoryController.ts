@@ -1,11 +1,11 @@
 import type { IncomingMessage, ServerResponse } from "http";
-import { verifyToken } from "./services/verifyToken";
-import { decodeJSONBody } from "./services/jsonDecoder";
-import { getParameterURL } from "./services/getParameterURL";
-import { decodeCreateCategoryDTO, decodeUpdateCategoryDTO } from "./services/category/decodeCategoryDTO";
-import { createCategory, getAllCategories, getCategoryByID, updateCategory, deleteCategory } from "./services/category/categoryCRUD";
-import { isPageValid } from "./services/isPageValid";
-import { setResponse } from "./services/setResponse";
+import { verifyToken } from "./services/verifyToken.js";
+import { decodeJSONBody } from "./services/jsonDecoder.js";
+import { getParameterURL } from "./services/getParameterURL.js";
+import { decodeCreateCategoryDTO, decodeUpdateCategoryDTO } from "./services/category/decodeCategoryDTO.js";
+import { createCategory, getAllCategories, getCategoryByID, updateCategory, deleteCategory } from "./services/category/categoryCRUD.js";
+import { isPageValid } from "./services/isPageValid.js";
+import { setResponse } from "./services/setResponse.js";
 
 export async function createNewCategory(request: IncomingMessage, response: ServerResponse) {
     try {
