@@ -76,6 +76,27 @@ export async function getAllTasksByCategory(userID: string, categoryID: string, 
     }
 };
 
+export async function getTasksByDate(userID: string, initialDate: string, finalDate: string, currentPage: number): Promise<ReadTaskDTO[]> {
+    if (currentPage >= 1) {
+        const tasksPerPage = 10;
+        const offset = (currentPage - 1) * tasksPerPage;
+
+        const getTasks = `
+            SELECT id, title, description, value, date, category, user_id AS "userID", created_at AS "createdAt", updated_at AS "updatedAt"
+            FROM tasks
+            WHERE user_id = $1 AND date BETWEEN $2 AND $3
+            ORDER BY created_at DESC
+            LIMIT $4 OFFSET $5
+        `;
+
+        const values = [userID, initialDate, finalDate, tasksPerPage, offset];
+        const result = await database.query(getTasks, values);
+        return result.map(row => row.value as ReadTaskDTO)
+    } else {
+        throw new Error("Invalid page number. Page number must be 1 or greater.");
+    }
+};
+
 export async function getTaskByID(taskID: string, userID: string): Promise<ReadTaskDTO> {
     const getTask = `
         SELECT id, title, description, value, date, category, user_id AS "userID", created_at AS "createdAt", updated_at AS "updatedAt"
