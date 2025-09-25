@@ -58,7 +58,7 @@ export async function signin(request: IncomingMessage, response: ServerResponse)
         }
 
     } catch (error) {
-        console.error("Error processing login:", error);
+        console.error("Error processing signin:", error);
         setResponse(response, 500, "error", "Internal Server Error.");
     }
 };
