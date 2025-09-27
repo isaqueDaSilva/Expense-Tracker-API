@@ -1,6 +1,7 @@
 import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 
-export function databaseConfig(databaseURL: string | undefined): NeonQueryFunction<false, false> {
+export function databaseConfig(): NeonQueryFunction<false, false> {
+    const databaseURL = process.env.DATABASE_URL;
     if (typeof databaseURL === 'string') {
         return neon(databaseURL);
     } else {
