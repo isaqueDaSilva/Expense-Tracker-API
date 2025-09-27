@@ -25,12 +25,17 @@ export async function createTask(CreateTaskDTO: CreateTaskDTO, userID: string): 
     `;
     
     const result = await database.query(newTask, values);
-    const task = result[0];
 
-    if (typeof task === "object") {
-        return task.value as ReadTaskDTO;
+    if (result.length == 1) {
+        const task = result[0];
+
+        if (typeof task === "object") {
+            return task as ReadTaskDTO;
+        } else {
+            throw new Error("Failed to create task");
+        }
     } else {
-        throw new Error("Failed to create task");
+        throw new Error("No task was created.");
     }
 };
 
@@ -49,7 +54,7 @@ export async function getAllTasks(userID: string, currentPage: number): Promise<
 
         const values = [userID, tasksPerPage, offset];
         const result = await database.query(getTasks, values);
-        return result.map(row => row.value as ReadTaskDTO);
+        return result.map(row => row as ReadTaskDTO);
     } else {
         throw new Error("Invalid page number. Page number must be 1 or greater.");
     }
@@ -70,7 +75,7 @@ export async function getAllTasksByCategory(userID: string, categoryID: string, 
 
         const values = [userID, categoryID, tasksPerPage, offset];
         const result = await database.query(getTasks, values);
-        return result.map(row => row.value as ReadTaskDTO);
+        return result.map(row => row as ReadTaskDTO);
     } else {
         throw new Error("Invalid page number. Page number must be 1 or greater.");
     }
@@ -91,7 +96,7 @@ export async function getTasksByDate(userID: string, initialDate: string, finalD
 
         const values = [userID, initialDate, finalDate, tasksPerPage, offset];
         const result = await database.query(getTasks, values);
-    return result.map(row => row.value as ReadTaskDTO);
+    return result.map(row => row as ReadTaskDTO);
     } else {
         throw new Error("Invalid page number. Page number must be 1 or greater.");
     }
@@ -106,12 +111,17 @@ export async function getTaskByID(taskID: string, userID: string): Promise<ReadT
 
     const values = [taskID, userID];
     const result = await database.query(getTask, values);
-    const task = result[0];
 
-    if (typeof task === "object") {
-        return task.value as ReadTaskDTO;
+    if (result.length == 1) {
+        const task = result[0];
+
+        if (typeof task === "object") {
+            return task as ReadTaskDTO;
+        } else {
+            throw new Error("Task not found");
+        }
     } else {
-        throw new Error("Task not found");
+        throw new Error("No task was founded.");
     }
 };
 
@@ -136,12 +146,17 @@ export async function updateTask(updatedTask: UpdateTaskDTO, taskID: string, use
     `;
 
     const result = await database.query(updateTaskQuery, values);
-    const task = result[0];
 
-    if (typeof task === "object") {
-        return task.value as ReadTaskDTO;
+    if (result.length == 1) {
+        const task = result[0];
+
+        if (typeof task === "object") {
+            return task as ReadTaskDTO;
+        } else {
+            throw new Error("Task not found or no changes made");
+        }
     } else {
-        throw new Error("Task not found or no changes made");
+        throw new Error("No task was founded.");
     }
 };
 

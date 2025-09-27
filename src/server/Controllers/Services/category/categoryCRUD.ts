@@ -8,12 +8,17 @@ export async function createCategory(categoryTitle: string, userID: string): Pro
 
     const values = [categoryTitle];
     const result = await database.query(newCategory, values);
-    const category = result[0];
 
-    if (typeof category === "object") {
-        return category.value as ReadCategoryDTO;
+    if (result.length == 1) {
+        const category = result[0];
+
+        if (typeof category === "object") {
+            return category as ReadCategoryDTO;
+        } else {
+            throw new Error("Failed to create new category.");
+        }
     } else {
-        throw new Error("Failed to create new category.");
+        throw new Error("No category was created.");
     }
 };
 
@@ -32,7 +37,7 @@ export async function getAllCategories(userID: string, currentPage: number): Pro
 
         const values = [userID, categoryPerPage, offset];
         const result = await database.query(getCategories, values);
-        return result.map(row => row.value as ReadCategoryDTO);
+        return result.map(row => row as ReadCategoryDTO);
     } else {
         throw new Error("Invalid page number. Page number must be 1 or greater.");
     }
@@ -47,12 +52,17 @@ export async function getCategoryByID(userID: string, categoryID: string): Promi
 
     const values = [userID, categoryID];
     const result = await database.query(getCategory, values);
-    const category = result[0];
 
-    if (typeof category === "object") {
-        return category.value as ReadCategoryDTO;
+    if (result.length == 1) {
+        const category = result[0];
+
+        if (typeof category === "object") {
+            return category as ReadCategoryDTO;
+        } else {
+            throw new Error("This category don't exist.");
+        }
     } else {
-        throw new Error("This category don't exist.");
+        throw new Error("No category was founded.");
     }
 };
 
@@ -66,12 +76,17 @@ export async function updateCategory(userID: string, categoryID: string, newTitl
 
     const values = [newTitle, categoryID, userID];
     const result = await database.query(updateCategory, values);
-    const updatedCategory = result [0];
 
-    if (typeof updatedCategory === "object") {
-        return updatedCategory.value as ReadCategoryDTO;
+    if (result.length == 1) {
+        const updatedCategory = result [0];
+
+        if (typeof updatedCategory === "object") {
+            return updatedCategory as ReadCategoryDTO;
+        } else {
+            throw new Error("This category don't exist.");
+        }
     } else {
-        throw new Error("This category don't exist.");
+        throw new Error("No category was founded.");
     }
 };
 

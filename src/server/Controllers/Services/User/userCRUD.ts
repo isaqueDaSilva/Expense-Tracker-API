@@ -3,18 +3,23 @@ import type { ReadUserDTO } from "../../dto/userDTO.js";
 
 export async function createUser(email: string, username: string, hashedPassword: string): Promise<ReadUserDTO> {
     const newUser = `
-        INSERT INTO users (email, username, password)
+        INSERT INTO users (email, username, password_hash)
         VALUES ($1, $2, $3)
         RETURNING id, email, username, is_logged AS "isLogged", last_logged_date AS "lastLoggedDate", created_at AS "createdAt";
     `;
     const values = [email, username, hashedPassword];
     const result = await database.query(newUser, values);
-    const user = result[0];
 
-    if (typeof user === "object") {
-        return user.value as ReadUserDTO;
+    if (result.length == 1) {
+        const user = result[0];
+
+        if (typeof user === "object") {
+            return user as ReadUserDTO;
+        } else {
+            throw new Error("Failed to create user");
+        }
     } else {
-        throw new Error("Failed to create user");
+        throw new Error("No user was created");
     }
 };
 
@@ -27,12 +32,17 @@ export async function getUserByEmail(email: string): Promise<{userResponse: Read
 
     const values = [email];
     const result = await database.query(user, values);
-    const foundUser = result[0];
 
-    if (typeof foundUser === "object") {
-        return {userResponse: foundUser.value as ReadUserDTO, passwordHash: foundUser.value.passwordHash as string};
+    if (result.length == 1) {
+        const foundUser = result[0];
+
+        if (typeof foundUser === "object") {
+            return {userResponse: foundUser.value as ReadUserDTO, passwordHash: foundUser.value.passwordHash as string};
+        } else {
+            throw new Error("User not found");
+        }
     } else {
-        throw new Error("User not found");
+        throw new Error("No user was founded");
     }
 };
 
