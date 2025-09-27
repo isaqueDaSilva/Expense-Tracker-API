@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && node dist/app.js",
     "execute": "node dist/app.js",
-    "migrate": "node dist/database/migration/databaseMigration.js"
+    "migrate": "tsc && node dist/database/migration/databaseMigration.js"
   },
   "repository": {
     "type": "git",
