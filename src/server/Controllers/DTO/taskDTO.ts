@@ -1,3 +1,5 @@
+import { UUID } from "../../../app.js";
+
 export interface CreateTaskDTO {
     title: string;
     description?: string | undefined;
@@ -7,7 +9,7 @@ export interface CreateTaskDTO {
 };
 
 export interface ReadTaskDTO {
-    id: string;
+    id: UUID;
     title: string;
     description?: string;
     value: number;

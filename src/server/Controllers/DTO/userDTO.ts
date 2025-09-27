@@ -1,3 +1,5 @@
+import { UUID } from "../../../app.js";
+
 export interface CreateUserDTO {
     username: string;
     email: string;
@@ -5,7 +7,7 @@ export interface CreateUserDTO {
 };
 
 export interface ReadUserDTO {
-    id: string;
+    id: UUID;
     username: string;
     email: string;
     isLogged: boolean;
