@@ -7,7 +7,7 @@ export const tasksTableSchema = `
         date DATE,
         category UUID REFERENCES categories(id) ON DELETE SET NULL,
         user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-        created_at DATE NOT NULL DEFAULT CURRENT_DATE,
-        updated_at DATE NOT NULL DEFAULT CURRENT_DATE
+        created_at DATE DEFAULT CURRENT_DATE NOT NULL,
+        updated_at DATE DEFAULT CURRENT_DATE NOT NULL
     );  
 `;
