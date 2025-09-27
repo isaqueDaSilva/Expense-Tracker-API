@@ -8,6 +8,7 @@ import { basicAuthenticationHandler } from "./services/basicAuthenticantionHandl
 import { disableToken } from "./services/tokens/tokenCRUD.js";
 import { setResponse } from "./services/setResponse.js";
 import { verifyToken } from "./services/verifyToken.js";
+import { string } from "zod";
 
 export async function signup(request: IncomingMessage, response: ServerResponse) {
     try {
@@ -24,10 +25,10 @@ export async function signup(request: IncomingMessage, response: ServerResponse)
             user: createdUser
         };
 
-        setResponse(response, 201, "result", responseJSON);
+        setResponse(response, 201, responseJSON);
     } catch (error) {
         console.error("Error processing signup:", error);
-        setResponse(response, 500, "error", "Internal Server Error.");
+        setResponse(response, 500, { "error": "Internal Server Error." });
     }
 };
 
@@ -51,15 +52,15 @@ export async function signin(request: IncomingMessage, response: ServerResponse)
                 user: user.userResponse
             };
 
-            setResponse(response, 200, "result", responseJSON);
+            setResponse(response, 200, responseJSON);
             return;
         } else {
-            setResponse(response, 401, "Error", "Authentication failed.");
+            setResponse(response, 401, {"error": "Authentication failed."});
         }
 
     } catch (error) {
         console.error("Error processing signin:", error);
-        setResponse(response, 500, "error", "Internal Server Error.");
+        setResponse(response, 500, {"error": "Internal Server Error."});
     }
 };
 
@@ -68,10 +69,10 @@ export async function signout(request: IncomingMessage, response: ServerResponse
         const token = await verifyToken(request);
         await updateUserLoginStatus(token.userID, false);
         await disableToken(token.value); // Store the token in the disabled tokens list
-        setResponse(response, 204, "message", "User signed out successfully" );
+        setResponse(response, 204, {"message": "User signed out successfully"} );
     } catch (error) {
         console.error("Error processing signout:", error);
-        setResponse(response, 500, "error", "Internal Server Error.");
+        setResponse(response, 500, {"error": "Internal Server Error."});
     }
 };
 
@@ -80,9 +81,9 @@ export async function removeUser(request: IncomingMessage, response: ServerRespo
         const token = await verifyToken(request);
         await deleteUser(token.userID);
         await disableToken(token.value); // Store the token in the disabled tokens list
-        setResponse(response, 204, "message", "User deleted successfully" );
+        setResponse(response, 204, {"message": "User deleted successfully"} );
     } catch (error) {
         console.error("Error processing user deletion:", error);
-        setResponse(response, 500, "error", "Internal Server Error.");
+        setResponse(response, 500, {"error": "Internal Server Error."});
     }
 };
