@@ -8,7 +8,6 @@ import { basicAuthenticationHandler } from "./services/basicAuthenticantionHandl
 import { disableToken } from "./services/tokens/tokenCRUD.js";
 import { setResponse } from "./services/setResponse.js";
 import { verifyToken } from "./services/verifyToken.js";
-import { string } from "zod";
 
 export async function signup(request: IncomingMessage, response: ServerResponse) {
     try {
