@@ -5,18 +5,18 @@ export async function decodeJSONBody<T>(request: IncomingMessage, decoder: (json
         let data = '';
 
         // Interates over the request body
-        request.on('data', chunk => {
-            data += chunk;
+        request.on('data', (chunk) => {
+            data += chunk.toString();
         });
 
         // Checks if the request has ended
         request.on('end', () => {
-            resolve(data);
+            return resolve(data);
         });
 
         // Handles any errors that may occur during the request
-        request.on('error', err => {
-            reject(err);
+        request.on('error', (err) => {
+            return reject(err);
         });       
     });
 
@@ -24,6 +24,6 @@ export async function decodeJSONBody<T>(request: IncomingMessage, decoder: (json
         const model = decoder(body);
         return model;
     } catch (error) {
-        throw new Error("Invalid JSON body");
+        throw error
     }
 }
