@@ -1,3 +1,4 @@
+import { NeonQueryPromise } from "@neondatabase/serverless";
 import { database } from "../../../../app.js";
 import type { ReadUserDTO } from "../../dto/userDTO.js";
 
@@ -46,7 +47,7 @@ export async function getUserByEmail(email: string): Promise<{userResponse: Read
     }
 };
 
-export async function updateUserLoginStatus(userID: string, isLogged: boolean): Promise<void> {
+export function updateUserLoginStatus(userID: string, isLogged: boolean): NeonQueryPromise<false, false, Record<string, any>[]> {
     const updateStatus = `
         UPDATE users
         SET is_logged = $1, last_logged_date = $2
@@ -54,15 +55,15 @@ export async function updateUserLoginStatus(userID: string, isLogged: boolean): 
     `;
 
     const values = [isLogged, new Date().toISOString(), userID];
-    await database.query(updateStatus, values);
+    return database.query(updateStatus, values);
 }
 
-export async function deleteUser(userID: string): Promise<void> {
+export function deleteUser(userID: string): NeonQueryPromise<false, false, Record<string, any>[]> {
     const deleteUserQuery = `
         DELETE FROM users
         WHERE id = $1;
     `;
 
     const values = [userID];
-    await database.query(deleteUserQuery, values);
+    return database.query(deleteUserQuery, values);
 }

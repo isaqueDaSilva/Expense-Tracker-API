@@ -1,13 +1,14 @@
+import { NeonQueryPromise } from "@neondatabase/serverless";
 import { database } from "../../../../app.js";
 
-export async function disableToken(token: string) {
+export function disableToken(token: string): NeonQueryPromise<false, false, Record<string, any>[]> {
     const newToken = `
         INSERT INTO disabled_tokens (raw_token_value)
         VALUES ($1);
     `;
 
     const values = [token];
-    await database.query(newToken, values);
+    return database.query(newToken, values);
 };
 
 export async function isTokenValid(rawToken: string): Promise<boolean> {
