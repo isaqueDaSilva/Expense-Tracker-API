@@ -1,5 +1,5 @@
 import { createServer } from "http";
-import { removeUser, signin, signout, signup } from "./controllers/authenticationController.js";
+import { refreshToken, removeUser, signin, signout, signup, verifyAccessToken } from "./controllers/authenticationController.js";
 import { createNewCategory, deleteCategoryWithID, getCategories, getCategoryById, updateCategoryWithId } from "./controllers/categoryController.js";
 import { createNewTask, getAllTasksByDate, getTasks, getTasksByCategory, getTask, updateCurrentTask, deleteCurrentTask } from "./controllers/tasksController.js";
 import { RoutesHandler } from "./routesHandler.js";
@@ -28,6 +28,24 @@ RoutesHandler.getSharedInstance().addRoutes({
   path: "/auth/signin",
   handler: (req, res) => {
     signin(req, res);
+  }
+});
+
+// GET: /auth/verifyAccessToken
+RoutesHandler.getSharedInstance().addRoutes({
+  method: "GET",
+  path: "auth/verifyAccessToken",
+  handler: (req, res) => {
+    verifyAccessToken(req, res);
+  }
+});
+
+// PUT: /auth/refreshToken
+RoutesHandler.getSharedInstance().addRoutes({
+  method: "PUT",
+  path:  "auth/refreshToken",
+  handler: (req, res) => {
+    refreshToken(req, res);
   }
 });
 
