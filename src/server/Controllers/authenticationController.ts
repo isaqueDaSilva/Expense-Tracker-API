@@ -3,11 +3,13 @@ import { decodeJSONBody } from "./services/jsonDecoder.js";
 import { decodeCreateUserDTO } from "./services/user/decodeUser.js";
 import { hashPassword, comparePassword } from "./services/passwordHash.js";
 import { createUser, getUserByEmail, updateUserLoginStatus, deleteUser } from "./services/user/userCRUD.js";
-import { createJWT } from "./services/jwtService.js";
+import { createJWT, getJWTValue } from "./services/jwtService.js";
 import { basicAuthenticationHandler } from "./services/basicAuthenticantionHandler.js";
 import { disableToken } from "./services/tokens/tokenCRUD.js";
 import { setResponse } from "./services/setResponse.js";
 import { verifyToken } from "./services/verifyToken.js";
+import { database } from "../../app.js";
+import { TokenType } from "./services/tokens/tokenType.js";
 
 export async function signup(request: IncomingMessage, response: ServerResponse) {
     try {
@@ -17,17 +19,18 @@ export async function signup(request: IncomingMessage, response: ServerResponse)
 
         const createdUser = await createUser(newUser.email, newUser.username, hashedPassword);
 
-        const token = createJWT(createdUser.id);
+        const pairOfTokens = createJWT(createdUser.id);
 
         const responseJSON = {
-            token: token,
+            accessToken: pairOfTokens.accessToken,
+            refreshToken: pairOfTokens.refreshToken,
             user: createdUser
         };
 
         setResponse(response, 201, responseJSON);
     } catch (error) {
         console.error("Error processing signup:", error);
-        setResponse(response, 500, { "error": "Internal Server Error." });
+        setResponse(response, 500, { error: "Internal Server Error." });
     }
 };
 
@@ -42,47 +45,90 @@ export async function signin(request: IncomingMessage, response: ServerResponse)
         user.passwordHash = ""; // Clear the password hash from memory as soon as possible
 
         if (!user.userResponse.isLogged && isPasswordValid) {
-            const newToken = createJWT(user.userResponse.id);
+            const newPairOfToken = createJWT(user.userResponse.id);
 
             await updateUserLoginStatus(user.userResponse.id, true);
 
             const responseJSON = {
-                token: newToken,
+                accessToken: newPairOfToken.accessToken,
+                refreshToken: newPairOfToken.refreshToken,
                 user: user.userResponse
             };
 
             setResponse(response, 200, responseJSON);
             return;
         } else {
-            setResponse(response, 401, {"error": "Authentication failed."});
+            setResponse(response, 401, { error: "Authentication failed."});
         }
 
     } catch (error) {
         console.error("Error processing signin:", error);
-        setResponse(response, 500, {"error": "Internal Server Error."});
+        setResponse(response, 500, {error: "Internal Server Error."});
     }
 };
 
 export async function signout(request: IncomingMessage, response: ServerResponse) {
     try {
-        const token = await verifyToken(request);
-        await updateUserLoginStatus(token.userID, false);
-        await disableToken(token.value); // Store the token in the disabled tokens list
-        setResponse(response, 204, {"message": "User signed out successfully"} );
+        const accessToken = await verifyToken(request, TokenType.access);
+        const refreshToken = await verifyToken(request, TokenType.refresh);
+
+        await database.transaction([
+            updateUserLoginStatus(accessToken.userID, false),
+            disableToken(accessToken.value),
+            disableToken(refreshToken.value)
+        ]);
+
+        setResponse(response, 204, {message: "User signed out successfully"} );
     } catch (error) {
         console.error("Error processing signout:", error);
-        setResponse(response, 500, {"error": "Internal Server Error."});
+        setResponse(response, 500, {error: "Internal Server Error."});
+    }
+};
+
+export async function refreshToken(request: IncomingMessage, response: ServerResponse) {
+    try {
+        const accessToken = getJWTValue(request, TokenType.access);
+        const refreshToken = await verifyToken(request, TokenType.refresh);
+
+        database.transaction([
+            disableToken(accessToken),
+            disableToken(refreshToken.value)
+        ])
+
+        const newPairOfToken = createJWT(refreshToken.userID);
+
+        setResponse(response, 200, newPairOfToken);
+    } catch (error) {
+        console.error("Error to refresh token:", error);
+        setResponse(response, 500, {error: "Internal Server Error."});
+    }
+};
+
+export async function verifyAccessToken(request: IncomingMessage, response: ServerResponse) {
+    try {
+        await verifyToken(request, TokenType.refresh)
+
+        setResponse(response, 200, {message: "token valid."});
+    } catch (error) {
+        console.error("Error to verify token:", error);
+        setResponse(response, 500, {error: "Internal Server Error."});
     }
 };
 
 export async function removeUser(request: IncomingMessage, response: ServerResponse) {
     try {
-        const token = await verifyToken(request);
-        await deleteUser(token.userID);
-        await disableToken(token.value); // Store the token in the disabled tokens list
-        setResponse(response, 204, {"message": "User deleted successfully"} );
+        const accessToken = await verifyToken(request, TokenType.access);
+        const refreshToken = await verifyToken(request, TokenType.refresh);
+
+        await database.transaction([
+            deleteUser(accessToken.userID),
+            disableToken(accessToken.value),
+            disableToken(refreshToken.value)
+        ]);
+
+        setResponse(response, 204, {message: "User deleted successfully"} );
     } catch (error) {
         console.error("Error processing user deletion:", error);
-        setResponse(response, 500, {"error": "Internal Server Error."});
+        setResponse(response, 500, {error: "Internal Server Error."});
     }
 };
