@@ -139,10 +139,10 @@ RoutesHandler.getSharedInstance().addRoutes({
   }
 });
 
-// GET: /task/all/byDate/:page
+// GET: /task/byDate/:page
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
-  path: "/task/all/byDate/:page",
+  path: "/task/byDate/:page",
   handler: (req, res, parameters) => {
     getAllTasksByDate(req, res, parameters || { });
   }
