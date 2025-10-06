@@ -1,16 +1,14 @@
 import type { IncomingMessage, ServerResponse } from "http";
-import { verifyToken } from "./services/verifyToken.js";
 import { decodeJSONBody } from "./services/jsonDecoder.js";
-import { getParameterURL } from "./services/getParameterURL.js";
 import { decodeCreateCategoryDTO, decodeUpdateCategoryDTO } from "./services/category/decodeCategoryDTO.js";
 import { createCategory, getAllCategories, getCategoryByID, updateCategory, deleteCategory } from "./services/category/categoryCRUD.js";
 import { isPageValid } from "./services/isPageValid.js";
 import { setResponse } from "./services/setResponse.js";
-import { TokenType } from "./services/tokens/tokenType.js";
+import { getAccessToken } from "./services/getAccessToken.js";
 
 export async function createNewCategory(request: IncomingMessage, response: ServerResponse) {
     try {
-        const token = await verifyToken(request, TokenType.access);
+        const token = await getAccessToken(request)
         const newCategory = await decodeJSONBody(request, decodeCreateCategoryDTO);
 
         if (typeof newCategory.title === 'string') {
@@ -26,28 +24,28 @@ export async function createNewCategory(request: IncomingMessage, response: Serv
     }
 };
 
-export async function getCategories(request: IncomingMessage, response: ServerResponse) {
+export async function getCategories(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await verifyToken(request, TokenType.access);
-        const pageParameter = getParameterURL(request, 'page');
-        const page = pageParameter ? parseInt(pageParameter, 10) : 1;
+        const token = await getAccessToken(request)
+        const pageParameter = (parameters as { page: string }).page;
+        const page = pageParameter ? parseInt(pageParameter, 10) : 0;
 
         if (!isPageValid(page, response)) {
             return;
-        };
-
-        const categories = await getAllCategories(token.userID, page);
-        setResponse(response, 200, categories);
+        } else {
+            const categories = await getAllCategories(token.userID, page);
+            setResponse(response, 200, categories);
+        }
     } catch (error) {
         console.error("Error processing get category:", error);
         setResponse(response, 500, { error: "Internal Server Error" } );
     }
 };
 
-export async function getCategoryById(request: IncomingMessage, response: ServerResponse) {
+export async function getCategoryById(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await verifyToken(request, TokenType.access);
-        const categoryID = getParameterURL(request, 'id');
+        const token = await getAccessToken(request)
+        const categoryID = (parameters as { id: string }).id;
 
         if (!categoryID) {
             setResponse(response, 400, { error: "Category ID is required." });
@@ -62,10 +60,10 @@ export async function getCategoryById(request: IncomingMessage, response: Server
     }
 };
 
-export async function updateCategoryWithId(request: IncomingMessage, response: ServerResponse) {
+export async function updateCategoryWithId(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await verifyToken(request, TokenType.access);
-        const categoryID = getParameterURL(request, 'id');
+        const token = await getAccessToken(request)
+        const categoryID = (parameters as { id: string }).id;
 
         if (!categoryID) {
             setResponse(response, 400, { error: "Category ID is required."} );
@@ -87,10 +85,10 @@ export async function updateCategoryWithId(request: IncomingMessage, response: S
     }
 };
 
-export async function deleteCategoryWithID(request: IncomingMessage, response: ServerResponse) {
+export async function deleteCategoryWithID(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await verifyToken(request, TokenType.access);
-        const categoryID = getParameterURL(request, 'id');
+        const token = await getAccessToken(request)
+        const categoryID = (parameters as { id: string }).id;
         
         if (!categoryID) {
             setResponse(response, 400, { error: "Category ID is required."} );

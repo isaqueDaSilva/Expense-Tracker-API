@@ -1,16 +1,14 @@
 import type { IncomingMessage, ServerResponse } from "http";
-import { verifyToken } from "./services/verifyToken.js";
 import { decodeJSONBody } from "./services/jsonDecoder.js";
-import { decodeCreateTaskDTO, decodeUpdateTaskDTO } from "./services/tasks/decodeTaskDTO.js";
+import { decodeCreateTaskDTO, decodeTaskSearch, decodeUpdateTaskDTO } from "./services/tasks/decodeTaskDTO.js";
 import { createTask, deleteTask, getAllTasks, getAllTasksByCategory, getTasksByDate, getTaskByID, updateTask } from "./services/tasks/tasksCRUD.js";
-import { getParameterURL } from "./services/getParameterURL.js";
 import { isPageValid } from "./services/isPageValid.js";
 import { setResponse } from "./services/setResponse.js";
-import { TokenType } from "./services/tokens/tokenType.js";
+import { getAccessToken } from "./services/getAccessToken.js";
 
 export async function createNewTask(request: IncomingMessage, response: ServerResponse) {
     try {
-        const token = await verifyToken(request, TokenType.access);
+        const token = await getAccessToken(request);
         const newTask = await decodeJSONBody(request, decodeCreateTaskDTO);
 
         const task = await createTask(newTask, token.userID);
@@ -22,10 +20,10 @@ export async function createNewTask(request: IncomingMessage, response: ServerRe
     }
 };
 
-export async function getTasks(request: IncomingMessage, response: ServerResponse) {
+export async function getTasks(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await verifyToken(request, TokenType.access);
-        const pageParameter = getParameterURL(request, 'page');
+        const token = await getAccessToken(request);
+        const pageParameter = (parameters as { page: string }).page;
         const page = pageParameter ? parseInt(pageParameter, 10) : 1;
 
         if (!isPageValid(page, response)) {
@@ -40,14 +38,13 @@ export async function getTasks(request: IncomingMessage, response: ServerRespons
     }
 };
 
-export async function getTasksByCategory(request: IncomingMessage, response: ServerResponse) {
+export async function getTasksByCategory(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await verifyToken(request, TokenType.access);
-        const categoryID = getParameterURL(request, 'category');
-        const pageParameter = getParameterURL(request, 'page');
-        const page = pageParameter ? parseInt(pageParameter, 10) : 1;
+        const token = await getAccessToken(request)
+        const utilParameters = (parameters as { category: string, page: string })
+        const page = parseInt(utilParameters.page, 10);
 
-        if (!categoryID) {
+        if (!utilParameters.category) {
             setResponse(response, 400, { error: "Category ID is required." } );
             return;
         }
@@ -56,7 +53,7 @@ export async function getTasksByCategory(request: IncomingMessage, response: Ser
             return;
         }
 
-        const tasks = await getAllTasksByCategory(token.userID, categoryID, page);
+        const tasks = await getAllTasksByCategory(token.userID, utilParameters.category, page);
         setResponse(response, 200, tasks);
     } catch (error) {
         console.error("Error processing get tasks by category:", error);
@@ -64,24 +61,18 @@ export async function getTasksByCategory(request: IncomingMessage, response: Ser
     }
 };
 
-export async function getAllTasksByDate(request: IncomingMessage, response: ServerResponse) {
+export async function getAllTasksByDate(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await verifyToken(request, TokenType.access);
-        const initialDate = getParameterURL(request, 'initial-date');
-        const finalDate = getParameterURL(request, 'final-date');
-        const pageParameter = getParameterURL(request, 'page');
+        const token = await getAccessToken(request)
+        const queryDate = await decodeJSONBody(request, decodeTaskSearch);
+        const pageParameter = (parameters as { page: string }).page;
         const page = pageParameter ? parseInt(pageParameter, 10) : 1;
-
-        if ((!initialDate || !finalDate) || (initialDate == finalDate)) {
-            setResponse(response, 400, { error: "Date out of range." } );
-            return;
-        }
 
         if (!isPageValid(page, response)) {
             return;
         }
 
-        const tasks = await getTasksByDate(token.userID, initialDate, finalDate, page);
+        const tasks = await getTasksByDate(token.userID, queryDate.initialDate.toISOString(), queryDate.finalDate.toISOString(), page);
         setResponse(response, 200, tasks);
     } catch (error) {
         console.error("Error processing get tasks by date range:", error);
@@ -89,10 +80,10 @@ export async function getAllTasksByDate(request: IncomingMessage, response: Serv
     }
 }
 
-export async function getTask(request: IncomingMessage, response: ServerResponse) {
+export async function getTask(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await verifyToken(request, TokenType.access);
-        const taskID = getParameterURL(request, 'id');
+        const token = await getAccessToken(request)
+        const taskID = (parameters as { id: string }).id;
 
         if (!taskID) {
             setResponse(response, 400, { error: "Task ID is required." } );
@@ -107,10 +98,10 @@ export async function getTask(request: IncomingMessage, response: ServerResponse
     }
 };
 
-export async function updateCurrentTask(request: IncomingMessage, response: ServerResponse) {
+export async function updateCurrentTask(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await verifyToken(request, TokenType.access);
-        const taskID = getParameterURL(request, 'id');
+        const token = await getAccessToken(request)
+        const taskID = (parameters as { id: string }).id;
 
         if (!taskID) {
             setResponse(response, 400, { error: "Task ID is required." } );
@@ -126,10 +117,10 @@ export async function updateCurrentTask(request: IncomingMessage, response: Serv
     }
 };
 
-export async function deleteCurrentTask(request: IncomingMessage, response: ServerResponse) {
+export async function deleteCurrentTask(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await verifyToken(request, TokenType.access);
-        const taskID = getParameterURL(request, 'id');
+        const token = await getAccessToken(request)
+        const taskID = (parameters as { id: string }).id;
 
         if (!taskID) {
             setResponse(response, 400, { error: "Task ID is required." } );
