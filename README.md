@@ -45,12 +45,12 @@ npm install
 Create a \`.env\` file on root of the project based on \`.env.example\`:
 
 ```env
-DATABASE_URL=postgres://seu_usuario:sua_senha@localhost:5432/expense_tracker
+DATABASE_URL=postgres://your_user:your_password@localhost:5432/expense_tracker
 PORT=3000
 HOSTNAME='127.0.0.1'
-JWT_ACCESS_SECRET=segredo_para_access_jwt
-JWT_REFRESH_SECRET=segredo_para_refresh_jwt
-JWT_ISSUER=segredo_para_jwt_issuer
+JWT_ACCESS_SECRET=secret_for_access_jwt_token
+JWT_REFRESH_SECRET=secret_for_refresh_jwt_token
+JWT_ISSUER=secret_for_jwt_issuer_identifier
 ```
 
 4. Perform database migrations
