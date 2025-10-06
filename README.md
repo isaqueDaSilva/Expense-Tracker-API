@@ -31,37 +31,37 @@ The Expense Tracker API is a RESTful service designed to help users efficiently 
 ### Instalação
 
 1. Clone the repository
-\`\`\`bash
+```bash
 git clone https://github.com/isaqueDaSilva/Expense-Tracker-API.git
 cd Expense-Tracker-API
-\`\`\`
+```
 
 2. Install Dependencies
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 3. Configure environment variables
 Create a \`.env\` file on root of the project based on \`.env.example\`:
 
-\`\`\`env
+```env
 DATABASE_URL=postgres://seu_usuario:sua_senha@localhost:5432/expense_tracker
 PORT=3000
 HOSTNAME='127.0.0.1'
 JWT_ACCESS_SECRET=segredo_para_access_jwt
 JWT_REFRESH_SECRET=segredo_para_refresh_jwt
 JWT_ISSUER=segredo_para_jwt_issuer
-\`\`\`
+```
 
 4. Perform database migrations
-\`\`\`bash
+```bash
 npm run migrate
-\`\`\`
+```
 
 5. Start server
-\`\`\`bash
+```bash
 npm run build
-\`\`\`
+```
 
 <h2 id="routes">📍 API Routes</h2>
 
@@ -71,9 +71,10 @@ npm run build
 |------|--------|-----------|
 | \`/auth/signup\` | POST | Create a new account |
 | \`/auth/signin\` | POST | Log in |
-| \`/auth/signout\` | DELETE | Log out |
 | \`/token/verify\` | GET | Verify access token |
 | \`/token/refresh\` | PUT | Refresh access token |
+| \`/auth/signout\` | DELETE | Log out |
+| \`/auth/delete-account\` | DELETE | Deletes user account
 
 ### Categories
 
@@ -92,13 +93,15 @@ npm run build
 | \`/task/create\` | POST | Creates a new expense |
 | \`/task/all/:page\` | GET | List expenses (paginated) |
 | \`/task/all/:category/:page\` | GET | List expenses by categories (paginated) |
-| \`/task/all/:initial-date/:final-date/:page\` | GET | List expenses by date range (paginated) |
+| \`/task/byDate/:page\` | GET | List expenses by date range (paginated) |
 | \`/task/get/:id\` | GET | Gets an expense by ID |
+| \`/task/update/:id\` | PATCH | updates an expense |
+| \`/task/:id/delete\` | DELETE | deletes an expense |
 
 <h3>Exemplos de Requisições</h3>
 
 #### Criar Nova Despesa
-\`\`\`json
+```json
 POST /task/create
 {
     "title": "Monthly Purchases",
@@ -107,15 +110,15 @@ POST /task/create
     "date": "2025-10-06",
     "category": "category-uuid"
 }
-\`\`\`
+```
 
 #### Criar Nova Categoria
-\`\`\`json
+```json
 POST /category/create
 {
     "title": "Food"
 }
-\`\`\`
+```
 
 <h2 id="tech">🛠 Technologies</h2>
 
