@@ -9,7 +9,30 @@ import { disableToken } from "./services/tokens/tokenCRUD.js";
 import { setResponse } from "./services/setResponse.js";
 import { verifyToken } from "./services/verifyToken.js";
 import { database } from "../../app.js";
-import { TokenType } from "./services/tokens/tokenType.js";
+import { getAccessToken } from "./services/getAccessToken.js";
+
+function setRefreshTokenCookie(token: string, response: ServerResponse) {
+    const cookie = `refresh_token=${token}; HttpOnly; Secure; SameSite=Strict; Path=/token/refresh; Max-Age=86400`;
+    response.setHeader("Set-Cookie", cookie);
+}
+
+function getRefreshToken(request: IncomingMessage): string | undefined {
+    const cookieValue = request.headers.cookie || ""
+    return cookieValue.split("; ").map(c => c.trim().split("=")).find(([name]) => name === "refresh_token")?.[1];
+}
+
+function clearCookie(response: ServerResponse) {
+  const cookie = `refresh_token=; HttpOnly; Secure; SameSite=Strict; Path=/token/refresh; Max-Age=0`;
+  response.setHeader("Set-Cookie", cookie);
+}
+
+async function getPairOfTokens(request: IncomingMessage): Promise<{accessToken: string, refreshToken: string, userID: string}> {
+    const { accessToken, userID } = await getAccessToken(request);
+    const refreshTokenValue = getRefreshToken(request) || ""
+    await verifyToken(refreshTokenValue, process.env.JWT_REFRESH_SECRET);
+
+    return { accessToken: accessToken, refreshToken: refreshTokenValue, userID: userID }
+}
 
 export async function signup(request: IncomingMessage, response: ServerResponse) {
     try {
@@ -23,9 +46,10 @@ export async function signup(request: IncomingMessage, response: ServerResponse)
 
         const responseJSON = {
             accessToken: pairOfTokens.accessToken,
-            refreshToken: pairOfTokens.refreshToken,
             user: createdUser
         };
+
+        setRefreshTokenCookie(pairOfTokens.refreshToken, response)
 
         setResponse(response, 201, responseJSON);
     } catch (error) {
@@ -37,25 +61,29 @@ export async function signup(request: IncomingMessage, response: ServerResponse)
 export async function signin(request: IncomingMessage, response: ServerResponse) {
     try {
         const credentials = basicAuthenticationHandler(request);
-        console.log("Credentials received:", credentials.username);
-
         const user = await getUserByEmail(credentials.username);
-        const isPasswordValid = await comparePassword(credentials.password, user.passwordHash);
+        const isPasswordValid = await comparePassword(credentials.password, user.passwordhash);
 
-        user.passwordHash = ""; // Clear the password hash from memory as soon as possible
+        user.passwordhash = ""; // Clear the password hash from memory as soon as possible
 
-        if (!user.userResponse.isLogged && isPasswordValid) {
-            const newPairOfToken = createJWT(user.userResponse.id);
+        if (!user.isLogged && isPasswordValid) {
+            const newPairOfToken = createJWT(user.id);
 
-            await updateUserLoginStatus(user.userResponse.id, true);
+            await updateUserLoginStatus(user.id, true);
 
             const responseJSON = {
                 accessToken: newPairOfToken.accessToken,
-                refreshToken: newPairOfToken.refreshToken,
-                user: user.userResponse
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    createdAt: user.createdAt,
+                }
             };
 
+            setRefreshTokenCookie(newPairOfToken.refreshToken, response)
             setResponse(response, 200, responseJSON);
+
             return;
         } else {
             setResponse(response, 401, { error: "Authentication failed."});
@@ -69,15 +97,15 @@ export async function signin(request: IncomingMessage, response: ServerResponse)
 
 export async function signout(request: IncomingMessage, response: ServerResponse) {
     try {
-        const accessToken = await verifyToken(request, TokenType.access);
-        const refreshToken = await verifyToken(request, TokenType.refresh);
+        const tokens = await getPairOfTokens(request)
 
         await database.transaction([
-            updateUserLoginStatus(accessToken.userID, false),
-            disableToken(accessToken.value),
-            disableToken(refreshToken.value)
+            updateUserLoginStatus(tokens.userID, false),
+            disableToken(tokens.accessToken),
+            disableToken(tokens.refreshToken)
         ]);
 
+        clearCookie(response)
         setResponse(response, 204, {message: "User signed out successfully"} );
     } catch (error) {
         console.error("Error processing signout:", error);
@@ -87,16 +115,16 @@ export async function signout(request: IncomingMessage, response: ServerResponse
 
 export async function refreshToken(request: IncomingMessage, response: ServerResponse) {
     try {
-        const accessToken = getJWTValue(request, TokenType.access);
-        const refreshToken = await verifyToken(request, TokenType.refresh);
-
+        const tokens = await getPairOfTokens(request);
+        
         database.transaction([
-            disableToken(accessToken),
-            disableToken(refreshToken.value)
+            disableToken(tokens.accessToken),
+            disableToken(tokens.refreshToken)
         ])
 
-        const newPairOfToken = createJWT(refreshToken.userID);
+        const newPairOfToken = createJWT(tokens.userID);
 
+        setRefreshTokenCookie(newPairOfToken.refreshToken, response);
         setResponse(response, 200, newPairOfToken);
     } catch (error) {
         console.error("Error to refresh token:", error);
@@ -106,7 +134,8 @@ export async function refreshToken(request: IncomingMessage, response: ServerRes
 
 export async function verifyAccessToken(request: IncomingMessage, response: ServerResponse) {
     try {
-        await verifyToken(request, TokenType.refresh)
+        const token = getJWTValue(request);
+        await verifyToken(token, process.env.JWT_ACCESS_SECRET);
 
         setResponse(response, 200, {message: "token valid."});
     } catch (error) {
@@ -117,13 +146,12 @@ export async function verifyAccessToken(request: IncomingMessage, response: Serv
 
 export async function removeUser(request: IncomingMessage, response: ServerResponse) {
     try {
-        const accessToken = await verifyToken(request, TokenType.access);
-        const refreshToken = await verifyToken(request, TokenType.refresh);
+        const tokens = await getPairOfTokens(request);
 
         await database.transaction([
-            deleteUser(accessToken.userID),
-            disableToken(accessToken.value),
-            disableToken(refreshToken.value)
+            deleteUser(tokens.userID),
+            disableToken(tokens.accessToken),
+            disableToken(tokens.refreshToken)
         ]);
 
         setResponse(response, 204, {message: "User deleted successfully"} );
