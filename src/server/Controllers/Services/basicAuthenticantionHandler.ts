@@ -12,7 +12,7 @@ export function basicAuthenticationHandler(request: IncomingMessage): { username
     if (typeof base64Credentials === 'string') {
         const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
         const [username, password] = credentials.split(':');
-
+        console.log(username, password)
         if (!username || !password) {
             throw new Error("Invalid Authorization header format");
         }

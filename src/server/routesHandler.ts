@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 
-type RouteHandler = (req: IncomingMessage, res: ServerResponse) => void;
+type RouteHandler = (req: IncomingMessage, res: ServerResponse, parameters?: Record<string, string>) => void;
 
 export interface Route {
   method: string;
@@ -36,11 +36,15 @@ export class RoutesHandler {
             const paramNames: string[] = [];
             const regexPath = route.path.replace(/:([^/]+)/g, (_, key) => {
                 paramNames.push(key);
+                console.log(paramNames)
                 return "([^/]+)";
             });
 
             const regex = new RegExp(`^${regexPath}$`);
+            console.log(regex)
             const match = url.match(regex);
+             
+            console.log(match)
 
             if (match) {
                 const params: Record<string, string> = {};
