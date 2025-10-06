@@ -66,10 +66,16 @@ export function decodeTaskSearch(jsonString: string): TaskSearch {
 
             return value
         }
-    })
+
+        return value
+    });
 
     return z.object({
-        initialDate: z.coerce.date("Missing initial date."),
-        finalDate: z.coerce.date("Missing final date.")
-    }).parse(parsed)
+        initialDate: z.string().refine((initialDate) => !isNaN(Date.parse(initialDate)), {
+            message: "Invalid date format"
+        }),
+        finalDate: z.string().refine((finalDate) => !isNaN(Date.parse(finalDate)), {
+            message: "Invalid date format"
+        })
+    }).parse(parsed);
 }
