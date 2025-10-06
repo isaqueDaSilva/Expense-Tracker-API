@@ -4,5 +4,5 @@ export function setResponse<T>(response: ServerResponse, statusCode: number, mes
     response.statusCode = statusCode;
     response.setHeader('Content-Type', 'application/json');
 
-    response.end(JSON.stringify({ message }));
+    response.end(JSON.stringify(message));
 }
