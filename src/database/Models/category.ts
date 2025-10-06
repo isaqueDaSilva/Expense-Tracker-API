@@ -2,7 +2,7 @@ export const categoryTableSchema = `
     CREATE TABLE IF NOT EXISTS categories (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid() UNIQUE NOT NULL,
         title VARCHAR(30) NOT NULL,
-        created_by UUID DEFAULT NULL REFERENCES users(id) ON DELETE SET NULL,
+        created_by UUID DEFAULT NULL REFERENCES users(id) ON DELETE CASCADE,
         created_at DATE DEFAULT CURRENT_DATE NOT NULL
     );
 `;
