@@ -20,6 +20,8 @@
 
 The Expense Tracker API is a RESTful service designed to help users efficiently manage and monitor their personal or business finances. It offers features for tracking expenses and categorizing spending.
 
+This project is my solution for [Expense tracker](https://roadmap.sh/projects/expense-tracker-api) from roadmap.sh website.
+
 <h2 id="started">🚀 Starting</h2>
 
 ### Pre-requirements
