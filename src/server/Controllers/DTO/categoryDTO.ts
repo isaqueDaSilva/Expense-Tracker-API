@@ -7,5 +7,6 @@ export interface CategoryDTO {
 export interface ReadCategoryDTO {
     id: UUID;
     title: string;
+    created_by: UUID;
     createdAt: string;
 };
