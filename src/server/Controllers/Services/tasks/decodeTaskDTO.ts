@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { CreateTaskDTO, UpdateTaskDTO } from '../../dto/taskDTO.js';
+import type { CreateTaskDTO, TaskSearch, UpdateTaskDTO } from '../../dto/taskDTO.js';
 
 export function decodeCreateTaskDTO(jsonString: string): CreateTaskDTO {
     const parsed = JSON.parse(jsonString, (key, value) => {
@@ -56,3 +56,20 @@ export function decodeUpdateTaskDTO(jsonString: string): UpdateTaskDTO {
         category: z.uuid("Invalid category ID").optional()
     }).parse(parsed);
 };
+
+export function decodeTaskSearch(jsonString: string): TaskSearch {
+    const parsed = JSON.parse(jsonString, (key, value) => {
+        if (key === 'initialDate' || key === 'finalDate') {
+            if (typeof value !== 'string') {
+                throw new Error(`Invalid type for ${key}: expected string`);
+            }
+
+            return value
+        }
+    })
+
+    return z.object({
+        initialDate: z.coerce.date("Missing initial date."),
+        finalDate: z.coerce.date("Missing final date.")
+    }).parse(parsed)
+}
