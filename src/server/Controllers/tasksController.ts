@@ -6,6 +6,7 @@ import { isPageValid } from "./services/isPageValid.js";
 import { setResponse } from "./services/setResponse.js";
 import { getAccessToken } from "./services/getAccessToken.js";
 
+// TODO: Add constraints to the same user cannot create two expenses with the same name.
 export async function createNewTask(request: IncomingMessage, response: ServerResponse) {
     try {
         const token = await getAccessToken(request);
@@ -72,7 +73,7 @@ export async function getAllTasksByDate(request: IncomingMessage, response: Serv
             return;
         }
 
-        const tasks = await getTasksByDate(token.userID, queryDate.initialDate.toISOString(), queryDate.finalDate.toISOString(), page);
+        const tasks = await getTasksByDate(token.userID, queryDate.initialDate, queryDate.finalDate, page);
         setResponse(response, 200, tasks);
     } catch (error) {
         console.error("Error processing get tasks by date range:", error);
