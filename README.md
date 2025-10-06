@@ -13,7 +13,7 @@
  <a href="#started">Starting</a> • 
  <a href="#routes"> API Routes</a> •
  <a href="#tech">Features</a> •
- <a href="#features">Funcionalidades</a>
+ <a href="#features">Features</a>
 </p>
 
 <h2 id="about">📌 About</h2>
@@ -98,9 +98,9 @@ npm run build
 | \`/task/update/:id\` | PATCH | updates an expense |
 | \`/task/:id/delete\` | DELETE | deletes an expense |
 
-<h3>Exemplos de Requisições</h3>
+<h3>Request Examples</h3>
 
-#### Criar Nova Despesa
+#### Creates a new expense
 ```json
 POST /task/create
 {
@@ -112,7 +112,7 @@ POST /task/create
 }
 ```
 
-#### Criar Nova Categoria
+#### Creates a new Category
 ```json
 POST /category/create
 {
