@@ -11,6 +11,7 @@ import { verifyToken } from "./services/verifyToken.js";
 import { database } from "../../app.js";
 import { getAccessToken } from "./services/getAccessToken.js";
 
+// MARK: Refresh Token Cook
 function setRefreshTokenCookie(token: string, response: ServerResponse) {
     const cookie = `refresh_token=${token}; HttpOnly; Secure; SameSite=Strict; Path=/token/refresh; Max-Age=86400`;
     response.setHeader("Set-Cookie", cookie);
@@ -34,6 +35,7 @@ async function getPairOfTokens(request: IncomingMessage): Promise<{accessToken: 
     return { accessToken: accessToken, refreshToken: refreshTokenValue, userID: userID }
 }
 
+// MARK: Auth Controller
 export async function signup(request: IncomingMessage, response: ServerResponse) {
     try {
         const newUser = await decodeJSONBody(request, decodeCreateUserDTO);
@@ -125,7 +127,7 @@ export async function refreshToken(request: IncomingMessage, response: ServerRes
         const newPairOfToken = createJWT(tokens.userID);
 
         setRefreshTokenCookie(newPairOfToken.refreshToken, response);
-        setResponse(response, 200, newPairOfToken);
+        setResponse(response, 200, { accessToken: newPairOfToken.accessToken });
     } catch (error) {
         console.error("Error to refresh token:", error);
         setResponse(response, 500, {error: "Internal Server Error."});
