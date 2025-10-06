@@ -31,19 +31,19 @@ RoutesHandler.getSharedInstance().addRoutes({
   }
 });
 
-// GET: /auth/verifyAccessToken
+// GET: /token/verify
 RoutesHandler.getSharedInstance().addRoutes({
   method: "GET",
-  path: "auth/verifyAccessToken",
+  path: "/token/verify",
   handler: (req, res) => {
     verifyAccessToken(req, res);
   }
 });
 
-// PUT: /auth/refreshToken
+// PUT: /token/refresh
 RoutesHandler.getSharedInstance().addRoutes({
   method: "PUT",
-  path:  "auth/refreshToken",
+  path:  "/token/refresh",
   handler: (req, res) => {
     refreshToken(req, res);
   }
@@ -80,8 +80,8 @@ RoutesHandler.getSharedInstance().addRoutes({
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
   path: "/category/all/:page",
-  handler: (req, res) => {
-    getCategories(req, res);
+  handler: (req, res, parameters) => {
+    getCategories(req, res, parameters || {} );
   }
 });
 
@@ -89,8 +89,8 @@ RoutesHandler.getSharedInstance().addRoutes({
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
   path: "/category/get/:id",
-  handler: (req, res) => {
-    getCategoryById(req, res);
+  handler: (req, res, parameters) => {
+    getCategoryById(req, res, parameters || {} );
   }
 });
 
@@ -98,8 +98,8 @@ RoutesHandler.getSharedInstance().addRoutes({
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "PATCH", 
   path: "/category/update/:id",
-  handler: (req, res) => {
-    updateCategoryWithId(req, res);
+  handler: (req, res, parameters) => {
+    updateCategoryWithId(req, res, parameters || { } );
   }
 });
 
@@ -107,8 +107,8 @@ RoutesHandler.getSharedInstance().addRoutes({
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "DELETE", 
   path: "/category/delete/:id",
-  handler: (req, res) => {
-    deleteCategoryWithID(req, res);
+  handler: (req, res, parameters) => {
+    deleteCategoryWithID(req, res, parameters || { });
   }
 });
 
@@ -125,8 +125,8 @@ RoutesHandler.getSharedInstance().addRoutes({
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
   path: "/task/all/:page",
-  handler: (req, res) => {
-    getTasks(req, res);
+  handler: (req, res, parameters) => {
+    getTasks(req, res, parameters || { });
   }
 });
 
@@ -134,17 +134,17 @@ RoutesHandler.getSharedInstance().addRoutes({
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
   path: "/task/all/:category/:page",
-  handler: (req, res) => {
-    getTasksByCategory(req, res);
+  handler: (req, res, parameters) => {
+    getTasksByCategory(req, res, parameters || { });
   }
 });
 
-// GET: /task/all/:initial-date/:final-date/:page
+// GET: /task/all/byDate/:page
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
-  path: "/task/all/:initial-date/:final-date/:page",
-  handler: (req, res) => {
-    getAllTasksByDate(req, res);
+  path: "/task/all/byDate/:page",
+  handler: (req, res, parameters) => {
+    getAllTasksByDate(req, res, parameters || { });
   }
 });
 
@@ -152,8 +152,8 @@ RoutesHandler.getSharedInstance().addRoutes({
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
   path: "/task/get/:id",
-  handler: (req, res) => {
-    getTask(req, res);
+  handler: (req, res, parameters) => {
+    getTask(req, res, parameters || { });
   }
 });
 
@@ -161,8 +161,8 @@ RoutesHandler.getSharedInstance().addRoutes({
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "PATCH", 
   path: "/task/update/:id",
-  handler: (req, res) => {
-    updateCurrentTask(req, res);
+  handler: (req, res, parameters) => {
+    updateCurrentTask(req, res, parameters || { });
   }
 });
 
@@ -170,23 +170,25 @@ RoutesHandler.getSharedInstance().addRoutes({
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "DELETE", 
   path: "/task/:id/delete",
-  handler: (req, res) => {
-    deleteCurrentTask(req, res);
+  handler: (req, res, parameters) => {
+    deleteCurrentTask(req, res, parameters || { });
   }
 });
 
-const hostname = '127.0.0.1';
-const port = 3000;
 export const server = createServer((req, res) => {
   if (!req.url || !req.method) {
     res.statusCode = 400;
     return res.end("Bad Request");
   }
 
+  console.log(req.method, req.url)
+
   const route = RoutesHandler.getSharedInstance().getMatchedRoute(req.method, req.url);
 
+  console.log(route)
+
   if (route) {
-    return route.handler(req, res);
+    return route.handler(req, res, route.params);
   }
 
   res.statusCode = 404;
