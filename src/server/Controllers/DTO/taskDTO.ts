@@ -29,6 +29,6 @@ export interface UpdateTaskDTO {
 };
 
 export interface TaskSearch {
-    initialDate: Date;
-    finalDate: Date
+    initialDate: string;
+    finalDate: string
 }
