@@ -8,8 +8,16 @@ export interface CreateUserDTO {
 
 export interface ReadUserDTO {
     id: UUID;
-    username: string;
     email: string;
+    username: string;
+    createdAt: Date;
+};
+
+export interface ReadFullUserDTO {
+    id: UUID;
+    email: string;
+    username: string;
+    passwordhash: string;
     isLogged: boolean;
     lastLoggedDate: Date;
     createdAt: Date;
