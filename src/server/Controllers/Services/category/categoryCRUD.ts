@@ -38,8 +38,6 @@ export async function getAllCategories(userID: string, currentPage: number): Pro
         const values = [userID, categoryPerPage, offset];
         const result = await database.query(getCategories, values);
 
-        console.log("response", result)
-
         return result.map(row => row as ReadCategoryDTO);
     } else {
         throw new Error("Invalid page number. Page number must be 1 or greater.");
