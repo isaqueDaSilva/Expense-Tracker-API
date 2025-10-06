@@ -1,12 +1,12 @@
 import { NeonQueryPromise } from "@neondatabase/serverless";
 import { database } from "../../../../app.js";
-import type { ReadUserDTO } from "../../dto/userDTO.js";
+import type { ReadFullUserDTO, ReadUserDTO } from "../../dto/userDTO.js";
 
 export async function createUser(email: string, username: string, hashedPassword: string): Promise<ReadUserDTO> {
     const newUser = `
         INSERT INTO users (email, username, password_hash)
         VALUES ($1, $2, $3)
-        RETURNING id, email, username, is_logged AS "isLogged", last_logged_date AS "lastLoggedDate", created_at AS "createdAt";
+        RETURNING id, email, username, created_at AS "createdAt";
     `;
     const values = [email, username, hashedPassword];
     const result = await database.query(newUser, values);
@@ -24,7 +24,7 @@ export async function createUser(email: string, username: string, hashedPassword
     }
 };
 
-export async function getUserByEmail(email: string): Promise<{userResponse: ReadUserDTO, passwordHash: string}> {
+export async function getUserByEmail(email: string): Promise<ReadFullUserDTO> {
     const user = `
         SELECT id, email, username, password_hash AS passwordHash, is_logged AS "isLogged", last_logged_date AS "lastLoggedDate", created_at AS "createdAt"
         FROM users
@@ -34,11 +34,13 @@ export async function getUserByEmail(email: string): Promise<{userResponse: Read
     const values = [email];
     const result = await database.query(user, values);
 
+    console.log(result[0])
+
     if (result.length == 1) {
-        const foundUser = result[0];
+        const foundUser = result[0] as ReadFullUserDTO;
 
         if (typeof foundUser === "object") {
-            return {userResponse: foundUser.value as ReadUserDTO, passwordHash: foundUser.value.passwordHash as string};
+            return foundUser;
         } else {
             throw new Error("User not found");
         }
