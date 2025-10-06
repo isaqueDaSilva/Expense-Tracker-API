@@ -1,23 +1,21 @@
-import type { IncomingMessage } from "http";
-import { getJWTValue, verifyJWT } from "./jwtService.js";
+import { verifyJWT } from "./jwtService.js";
 import { disableToken, isTokenValid } from "./tokens/tokenCRUD.js";
-import { TokenType } from "./tokens/tokenType.js";
 import { updateUserLoginStatus } from "./user/userCRUD.js";
 
-export async function verifyToken(request: IncomingMessage, tokenType: TokenType): Promise<{value: string, userID: string}> {
-    const token = getJWTValue(request, tokenType);
+export async function verifyToken(token: string, secret: string | undefined): Promise<string> {
     try {
-        const userID = verifyJWT(token, tokenType);
+        const { userID, error } = verifyJWT(token, secret);
 
-        if (await isTokenValid(token)) {
-            return {value: token, userID: userID};
+        if (await isTokenValid(token) && !error) {
+            return userID
         } else {
-            await disableToken(token)
             await updateUserLoginStatus(userID, false)
-            throw new Error("Invalid token.")
+            throw new Error("Invalid token:", error)
         }
-    } catch {
-        await disableToken(token)
-        throw new Error("Invalid token.")
+    } catch (error) {
+        if (await isTokenValid(token)) {
+            await disableToken(token)
+        }
+        throw error;
     }
 };
