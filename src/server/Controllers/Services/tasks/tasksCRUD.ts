@@ -82,7 +82,9 @@ export async function getAllTasksByCategory(userID: string, categoryID: string, 
 };
 
 export async function getTasksByDate(userID: string, initialDate: string, finalDate: string, currentPage: number): Promise<ReadTaskDTO[]> {
-    if (currentPage >= 1) {
+    const initialDateValue = new Date(initialDate);
+    const finalDateValue = new Date(finalDate)
+    if (currentPage >= 1 && finalDateValue > initialDateValue) {
         const tasksPerPage = 10;
         const offset = (currentPage - 1) * tasksPerPage;
 
@@ -98,7 +100,7 @@ export async function getTasksByDate(userID: string, initialDate: string, finalD
         const result = await database.query(getTasks, values);
     return result.map(row => row as ReadTaskDTO);
     } else {
-        throw new Error("Invalid page number. Page number must be 1 or greater.");
+        throw new Error(`Invalid page number or date range: page: ${currentPage}; initial date: ${initialDate}; final date: ${finalDate}`);
     }
 };
 
