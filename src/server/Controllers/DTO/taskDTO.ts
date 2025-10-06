@@ -27,3 +27,8 @@ export interface UpdateTaskDTO {
     date?: string | undefined;
     category?: string | undefined;
 };
+
+export interface TaskSearch {
+    initialDate: Date;
+    finalDate: Date
+}
