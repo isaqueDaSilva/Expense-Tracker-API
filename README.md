@@ -71,34 +71,34 @@ npm run build
 
 | Route | Method | Description |
 |------|--------|-----------|
-| \`/auth/signup\` | POST | Create a new account |
-| \`/auth/signin\` | POST | Log in |
-| \`/token/verify\` | GET | Verify access token |
-| \`/token/refresh\` | PUT | Refresh access token |
-| \`/auth/signout\` | DELETE | Log out |
-| \`/auth/delete-account\` | DELETE | Deletes user account
+| /auth/signup | POST | Create a new account |
+| /auth/signin | POST | Log in |
+| /token/verify | GET | Verify access token |
+| /token/refresh | PUT | Refresh access token |
+| /auth/signout | DELETE | Log out |
+| /auth/delete-account | DELETE | Deletes user account
 
 ### Categories
 
 | Route | Method | Description |
 |------|--------|-----------|
-| \`/category/create\` | POST | Create a new category |
-| \`/category/all/:page\` | GET | List categories (paginated) |
-| \`/category/get/:id\` | GET | Get a category by ID |
-| \`/category/:id/update\` | PATCH | Updates a category |
-| \`/category/:id/delete\` | DELETE | Deletes a category |
+| /category/create | POST | Create a new category |
+| /category/all/:page | GET | List categories (paginated) |
+| /category/get/:id | GET | Get a category by ID |
+| /category/:id/update | PATCH | Updates a category |
+| /category/:id/delete | DELETE | Deletes a category |
 
 ### Expenses
 
 | Route | Method | Description |
 |------|--------|-----------|
-| \/task/create\ | POST | Creates a new expense |
-| \`/task/all/:page\` | GET | List expenses (paginated) |
-| \`/task/all/:category/:page\` | GET | List expenses by categories (paginated) |
-| \`/task/byDate/:page\` | GET | List expenses by date range (paginated) |
-| \`/task/get/:id\` | GET | Gets an expense by ID |
-| \`/task/update/:id\` | PATCH | updates an expense |
-| \`/task/:id/delete\` | DELETE | deletes an expense |
+| /task/create\ | POST | Creates a new expense |
+| /task/all/:page | GET | List expenses (paginated) |
+| /task/all/:category/:page | GET | List expenses by categories (paginated) |
+| /task/byDate/:page | GET | List expenses by date range (paginated) |
+| /task/get/:id | GET | Gets an expense by ID |
+| /task/update/:id | PATCH | updates an expense |
+| /task/:id/delete | DELETE | deletes an expense |
 
 <h3>Request Examples</h3>
 
