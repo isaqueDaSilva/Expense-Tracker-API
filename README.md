@@ -12,7 +12,7 @@
  <a href="#about">About</a> • 
  <a href="#started">Starting</a> • 
  <a href="#routes"> API Routes</a> •
- <a href="#tech">Features</a> •
+ <a href="#tech">Technologies</a> •
  <a href="#features">Features</a>
 </p>
 
