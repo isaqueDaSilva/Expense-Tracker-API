@@ -92,7 +92,7 @@ npm run build
 
 | Route | Method | Description |
 |------|--------|-----------|
-| \`/task/create\` | POST | Creates a new expense |
+| \/task/create\ | POST | Creates a new expense |
 | \`/task/all/:page\` | GET | List expenses (paginated) |
 | \`/task/all/:category/:page\` | GET | List expenses by categories (paginated) |
 | \`/task/byDate/:page\` | GET | List expenses by date range (paginated) |
