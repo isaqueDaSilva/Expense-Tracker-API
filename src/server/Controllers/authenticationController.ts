@@ -3,7 +3,7 @@ import { decodeJSONBody } from "./services/jsonDecoder.js";
 import { decodeCreateUserDTO } from "./services/user/decodeUser.js";
 import { hashPassword, comparePassword } from "./services/passwordHash.js";
 import { createUser, getUserByEmail, updateUserLoginStatus, deleteUser } from "./services/user/userCRUD.js";
-import { createJWT, getJWTValue } from "./services/jwtService.js";
+import { createJWT, getJWTValue, RefreshToken } from "./services/jwtService.js";
 import { basicAuthenticationHandler } from "./services/basicAuthenticantionHandler.js";
 import { disableToken } from "./services/tokens/tokenCRUD.js";
 import { setResponse } from "./services/setResponse.js";
@@ -12,8 +12,8 @@ import { database } from "../../app.js";
 import { getAccessToken } from "./services/getAccessToken.js";
 
 // MARK: Refresh Token Cook
-function setRefreshTokenCookie(token: string, response: ServerResponse) {
-    const cookie = `refresh_token=${token}; HttpOnly; Secure; SameSite=Strict; Path=/token/refresh; Max-Age=86400`;
+function setRefreshTokenCookie(token: RefreshToken, response: ServerResponse) {
+    const cookie = `refresh_token=${token.token}; HttpOnly; Secure; SameSite=Strict; Path=/token/refresh; Expires=${token.expiresOn}`;
     response.setHeader("Set-Cookie", cookie);
 }
 
