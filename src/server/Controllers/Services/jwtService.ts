@@ -2,8 +2,11 @@ import jwt from "jsonwebtoken";
 import type { IncomingMessage } from "http";
 import { JWTPayload } from "./tokens/jwtPayload.js";
 
-export function createJWT(userID: string): {accessToken: string, refreshToken: string } {
+export type RefreshToken = { token: string, expiresOn: string }
+
+export function createJWT(userID: string): {accessToken: string, refreshToken: RefreshToken } {
     const issuedAt: Date = new Date();
+    const refreshTokenExpirationDate = new Date(issuedAt.getTime() + 60 * 60 * 1_000 * 24) // 1 Day
     const randomNumber = Math.floor(Math.random() * 1000000).toString();
     const issuer = process.env.JWT_ISSUER || "Expense Tracker API";
 
@@ -20,7 +23,7 @@ export function createJWT(userID: string): {accessToken: string, refreshToken: s
         issuer: issuer,
         subject: userID,
         issuedAt: issuedAt.toString(),
-        expiration: new Date(issuedAt.getTime() + 60 * 60 * 1000 * 24).toString() // 1 day
+        expiration: refreshTokenExpirationDate.toString()
     }
 
     const accessTokenSecret = process.env.JWT_ACCESS_SECRET;
@@ -41,7 +44,7 @@ export function createJWT(userID: string): {accessToken: string, refreshToken: s
         throw new Error("Failed to create refresh token.");
     }
 
-    return { accessToken: accessToken, refreshToken: refreshToken }
+    return { accessToken: accessToken, refreshToken: { token: refreshToken, expiresOn: refreshTokenExpirationDate.toISOString() } }
 };
 
 export function verifyJWT(token: string, secret: string | undefined): { userID: string, error?: Error} {
