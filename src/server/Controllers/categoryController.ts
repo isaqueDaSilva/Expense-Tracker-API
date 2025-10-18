@@ -4,11 +4,11 @@ import { decodeCreateCategoryDTO, decodeUpdateCategoryDTO } from "./services/cat
 import { createCategory, getAllCategories, getCategoryByID, updateCategory, deleteCategory } from "./services/category/categoryCRUD.js";
 import { isPageValid } from "./services/isPageValid.js";
 import { setResponse } from "./services/setResponse.js";
-import { getAccessToken } from "./services/getAccessToken.js";
+import { getAccessTokenValue } from "./services/tokens/getTokens.js";
 
 export async function createNewCategory(request: IncomingMessage, response: ServerResponse) {
     try {
-        const token = await getAccessToken(request)
+        const token = await getAccessTokenValue(request)
         const newCategory = await decodeJSONBody(request, decodeCreateCategoryDTO);
 
         if (typeof newCategory.title === 'string') {
@@ -26,7 +26,7 @@ export async function createNewCategory(request: IncomingMessage, response: Serv
 
 export async function getCategories(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await getAccessToken(request)
+        const token = await getAccessTokenValue(request)
         const pageParameter = (parameters as { page: string }).page;
         const page = pageParameter ? parseInt(pageParameter, 10) : 0;
 
@@ -44,7 +44,7 @@ export async function getCategories(request: IncomingMessage, response: ServerRe
 
 export async function getCategoryById(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await getAccessToken(request)
+        const token = await getAccessTokenValue(request)
         const categoryID = (parameters as { id: string }).id;
 
         if (!categoryID) {
@@ -62,7 +62,7 @@ export async function getCategoryById(request: IncomingMessage, response: Server
 
 export async function updateCategoryWithId(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await getAccessToken(request)
+        const token = await getAccessTokenValue(request)
         const categoryID = (parameters as { id: string }).id;
 
         if (!categoryID) {
@@ -87,7 +87,7 @@ export async function updateCategoryWithId(request: IncomingMessage, response: S
 
 export async function deleteCategoryWithID(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await getAccessToken(request)
+        const token = await getAccessTokenValue(request)
         const categoryID = (parameters as { id: string }).id;
         
         if (!categoryID) {

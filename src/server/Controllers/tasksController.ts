@@ -4,12 +4,12 @@ import { decodeCreateTaskDTO, decodeTaskSearch, decodeUpdateTaskDTO } from "./se
 import { createTask, deleteTask, getAllTasks, getAllTasksByCategory, getTasksByDate, getTaskByID, updateTask } from "./services/tasks/tasksCRUD.js";
 import { isPageValid } from "./services/isPageValid.js";
 import { setResponse } from "./services/setResponse.js";
-import { getAccessToken } from "./services/getAccessToken.js";
+import { getAccessTokenValue } from "./services/tokens/getTokens.js";
 
 // TODO: Add constraints to the same user cannot create two expenses with the same name.
 export async function createNewTask(request: IncomingMessage, response: ServerResponse) {
     try {
-        const token = await getAccessToken(request);
+        const token = await getAccessTokenValue(request);
         const newTask = await decodeJSONBody(request, decodeCreateTaskDTO);
 
         const task = await createTask(newTask, token.userID);
@@ -23,7 +23,7 @@ export async function createNewTask(request: IncomingMessage, response: ServerRe
 
 export async function getTasks(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await getAccessToken(request);
+        const token = await getAccessTokenValue(request);
         const pageParameter = (parameters as { page: string }).page;
         const page = pageParameter ? parseInt(pageParameter, 10) : 1;
 
@@ -41,7 +41,7 @@ export async function getTasks(request: IncomingMessage, response: ServerRespons
 
 export async function getTasksByCategory(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await getAccessToken(request)
+        const token = await getAccessTokenValue(request)
         const utilParameters = (parameters as { category: string, page: string })
         const page = parseInt(utilParameters.page, 10);
 
@@ -64,7 +64,7 @@ export async function getTasksByCategory(request: IncomingMessage, response: Ser
 
 export async function getAllTasksByDate(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await getAccessToken(request)
+        const token = await getAccessTokenValue(request)
         const queryDate = await decodeJSONBody(request, decodeTaskSearch);
         const pageParameter = (parameters as { page: string }).page;
         const page = pageParameter ? parseInt(pageParameter, 10) : 1;
@@ -83,7 +83,7 @@ export async function getAllTasksByDate(request: IncomingMessage, response: Serv
 
 export async function getTask(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await getAccessToken(request)
+        const token = await getAccessTokenValue(request)
         const taskID = (parameters as { id: string }).id;
 
         if (!taskID) {
@@ -101,7 +101,7 @@ export async function getTask(request: IncomingMessage, response: ServerResponse
 
 export async function updateCurrentTask(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await getAccessToken(request)
+        const token = await getAccessTokenValue(request)
         const taskID = (parameters as { id: string }).id;
 
         if (!taskID) {
@@ -120,7 +120,7 @@ export async function updateCurrentTask(request: IncomingMessage, response: Serv
 
 export async function deleteCurrentTask(request: IncomingMessage, response: ServerResponse, parameters: Record<string, string>) {
     try {
-        const token = await getAccessToken(request)
+        const token = await getAccessTokenValue(request)
         const taskID = (parameters as { id: string }).id;
 
         if (!taskID) {
