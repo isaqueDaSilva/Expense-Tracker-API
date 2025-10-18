@@ -2,7 +2,7 @@ import type { NeonQueryFunction } from "@neondatabase/serverless";
 import { usersTableSchema } from "../models/user.js";
 import { tasksTableSchema } from "../models/tasks.js";
 import { categoryTableSchema, groceries, leisure, electronics, utilities, clothing, health } from "../models/category.js";
-import { disabledTokensTableSchema } from "../models/disabledTokens.js";
+import { sessionsTableSchema } from "../models/sessions.js";
 import { databaseConfig } from "../configuration/databaseConfig.js";
 import * as dotenv from 'dotenv';
 
@@ -20,7 +20,7 @@ async function databaseMigration(database: NeonQueryFunction<false, false>) {
             database.query(clothing),
             database.query(health),
             database.query(tasksTableSchema),
-            database.query(disabledTokensTableSchema)
+            database.query(sessionsTableSchema),
         ]
     )
 };
