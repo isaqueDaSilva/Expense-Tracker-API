@@ -3,36 +3,36 @@ import { decodeJSONBody } from "./services/jsonDecoder.js";
 import { decodeCreateUserDTO } from "./services/user/decodeUser.js";
 import { hashPassword, comparePassword } from "./services/passwordHash.js";
 import { createUser, getUserByEmail, updateUserLoginStatus, deleteUser } from "./services/user/userCRUD.js";
-import { createJWT, getJWTValue, RefreshToken } from "./services/jwtService.js";
+import { createJWT, getJWTValue, RefreshToken } from "./services/tokens/jwtService.js";
 import { basicAuthenticationHandler } from "./services/basicAuthenticantionHandler.js";
-import { disableToken } from "./services/tokens/tokenCRUD.js";
+import { createSession, deleteSession, updateSession } from "./services/tokens/sessionCRUD.js";
 import { setResponse } from "./services/setResponse.js";
-import { verifyToken } from "./services/verifyToken.js";
 import { database } from "../../app.js";
-import { getAccessToken } from "./services/getAccessToken.js";
+import { getAccessTokenValue, verifyRefreshTokenValidity } from "./services/tokens/getTokens.js";
+import { verifyAccessToken } from "./services/tokens/verifyToken.js";
 
-// MARK: Refresh Token Cook
+// MARK: Refresh Token Cookie
 function setRefreshTokenCookie(token: RefreshToken, response: ServerResponse) {
-    const cookie = `refresh_token=${token.token}; HttpOnly; Secure; SameSite=Strict; Path=/token/refresh; Expires=${token.expiresOn}`;
+    const cookie = `refresh_token_id=${token.id}; HttpOnly; Secure; SameSite=Strict; Path=/token/refresh; Expires=${token.expiresOn}`;
     response.setHeader("Set-Cookie", cookie);
-}
+};
 
-function getRefreshToken(request: IncomingMessage): string | undefined {
-    const cookieValue = request.headers.cookie || ""
-    return cookieValue.split("; ").map(c => c.trim().split("=")).find(([name]) => name === "refresh_token")?.[1];
+function getRefreshTokenID(request: IncomingMessage): string | undefined {
+    const cookieValue = request.headers.cookie || "";
+    return cookieValue.split("; ").map(c => c.trim().split("=")).find(([name]) => name === "refresh_token_id")?.[1];
 }
 
 function clearCookie(response: ServerResponse) {
-  const cookie = `refresh_token=; HttpOnly; Secure; SameSite=Strict; Path=/token/refresh; Max-Age=0`;
+  const cookie = `refresh_token_id=; HttpOnly; Secure; SameSite=Strict; Path=/token/refresh; Expires=`;
   response.setHeader("Set-Cookie", cookie);
 }
 
-async function getPairOfTokens(request: IncomingMessage): Promise<{accessToken: string, refreshToken: string, userID: string}> {
-    const { accessToken, userID } = await getAccessToken(request);
-    const refreshTokenValue = getRefreshToken(request) || ""
-    await verifyToken(refreshTokenValue, process.env.JWT_REFRESH_SECRET);
+async function getPairOfTokens(request: IncomingMessage): Promise<{accessToken: string, refreshTokenID: string, userID: string}> {
+    const { accessToken, userID } = await getAccessTokenValue(request);
+    const refreshTokenID = getRefreshTokenID(request) || "";
+    await verifyRefreshTokenValidity(refreshTokenID)
 
-    return { accessToken: accessToken, refreshToken: refreshTokenValue, userID: userID }
+    return { accessToken: accessToken, refreshTokenID: refreshTokenID, userID: userID }
 }
 
 // MARK: Auth Controller
@@ -46,8 +46,10 @@ export async function signup(request: IncomingMessage, response: ServerResponse)
 
         const pairOfTokens = createJWT(createdUser.id);
 
+        await createSession(createdUser.id, pairOfTokens.accessToken.verificationCode, pairOfTokens.refreshToken.token, pairOfTokens.refreshToken.id);
+
         const responseJSON = {
-            accessToken: pairOfTokens.accessToken,
+            accessToken: pairOfTokens.accessToken.token,
             user: createdUser
         };
 
@@ -71,10 +73,13 @@ export async function signin(request: IncomingMessage, response: ServerResponse)
         if (!user.isLogged && isPasswordValid) {
             const newPairOfToken = createJWT(user.id);
 
-            await updateUserLoginStatus(user.id, true);
+            database.transaction([
+                createSession(user.id, newPairOfToken.accessToken.verificationCode, newPairOfToken.refreshToken.token, newPairOfToken.refreshToken.id),
+                updateUserLoginStatus(user.id, true)
+            ])
 
             const responseJSON = {
-                accessToken: newPairOfToken.accessToken,
+                accessToken: newPairOfToken.accessToken.token,
                 user: {
                     id: user.id,
                     username: user.username,
@@ -103,8 +108,7 @@ export async function signout(request: IncomingMessage, response: ServerResponse
 
         await database.transaction([
             updateUserLoginStatus(tokens.userID, false),
-            disableToken(tokens.accessToken),
-            disableToken(tokens.refreshToken)
+            deleteSession(tokens.refreshTokenID)
         ]);
 
         clearCookie(response)
@@ -118,26 +122,22 @@ export async function signout(request: IncomingMessage, response: ServerResponse
 export async function refreshToken(request: IncomingMessage, response: ServerResponse) {
     try {
         const tokens = await getPairOfTokens(request);
-        
-        database.transaction([
-            disableToken(tokens.accessToken),
-            disableToken(tokens.refreshToken)
-        ])
-
         const newPairOfToken = createJWT(tokens.userID);
 
+        await updateSession(tokens.refreshTokenID, newPairOfToken.refreshToken.id, newPairOfToken.refreshToken.token, newPairOfToken.accessToken.verificationCode)
+
         setRefreshTokenCookie(newPairOfToken.refreshToken, response);
-        setResponse(response, 200, { accessToken: newPairOfToken.accessToken });
+        setResponse(response, 200, { accessToken: newPairOfToken.accessToken.token });
     } catch (error) {
         console.error("Error to refresh token:", error);
         setResponse(response, 500, {error: "Internal Server Error."});
     }
 };
 
-export async function verifyAccessToken(request: IncomingMessage, response: ServerResponse) {
+export async function verifyAccessTokenFromRequest(request: IncomingMessage, response: ServerResponse) {
     try {
         const token = getJWTValue(request);
-        await verifyToken(token, process.env.JWT_ACCESS_SECRET);
+        await verifyAccessToken(token, process.env.JWT_ACCESS_SECRET);
 
         setResponse(response, 200, {message: "token valid."});
     } catch (error) {
@@ -152,8 +152,7 @@ export async function removeUser(request: IncomingMessage, response: ServerRespo
 
         await database.transaction([
             deleteUser(tokens.userID),
-            disableToken(tokens.accessToken),
-            disableToken(tokens.refreshToken)
+            deleteSession(tokens.refreshTokenID)
         ]);
 
         setResponse(response, 204, {message: "User deleted successfully"} );
