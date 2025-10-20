@@ -1,10 +1,10 @@
 import type { IncomingMessage, ServerResponse } from "http";
-import { decodeJSONBody } from "./services/jsonDecoder.js";
-import { decodeCreateCategoryDTO, decodeUpdateCategoryDTO } from "./services/category/decodeCategoryDTO.js";
-import { createCategory, getAllCategories, getCategoryByID, updateCategory, deleteCategory } from "./services/category/categoryCRUD.js";
-import { isPageValid } from "./services/isPageValid.js";
-import { setResponse } from "./services/setResponse.js";
-import { getAccessTokenValue } from "./services/tokens/getTokens.js";
+import { decodeJSONBody } from "../services/jsonDecoder.js";
+import { decodeCreateCategoryDTO, decodeUpdateCategoryDTO } from "../services/category/decodeCategoryDTO.js";
+import { createCategory, getAllCategories, getCategoryByID, updateCategory, deleteCategory } from "../services/category/categoryCRUD.js";
+import { isPageValid } from "../services/isPageValid.js";
+import { setResponse } from "../services/setResponse.js";
+import { getAccessTokenValue } from "../services/tokens/getTokens.js";
 
 export async function createNewCategory(request: IncomingMessage, response: ServerResponse) {
     try {

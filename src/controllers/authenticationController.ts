@@ -1,15 +1,15 @@
 import type { IncomingMessage, ServerResponse } from "http";
-import { decodeJSONBody } from "./services/jsonDecoder.js";
-import { decodeCreateUserDTO } from "./services/user/decodeUser.js";
-import { hashPassword, comparePassword } from "./services/passwordHash.js";
-import { createUser, getUserByEmail, updateUserLoginStatus, deleteUser } from "./services/user/userCRUD.js";
-import { createJWT, getJWTValue, RefreshToken } from "./services/tokens/jwtService.js";
-import { basicAuthenticationHandler } from "./services/basicAuthenticantionHandler.js";
-import { createSession, deleteSession, updateSession } from "./services/tokens/sessionCRUD.js";
-import { setResponse } from "./services/setResponse.js";
-import { database } from "../../app.js";
-import { getAccessTokenValue, verifyRefreshTokenValidity } from "./services/tokens/getTokens.js";
-import { verifyAccessToken } from "./services/tokens/verifyToken.js";
+import { decodeJSONBody } from "../services/jsonDecoder.js";
+import { decodeCreateUserDTO } from "../services/user/decodeUser.js";
+import { hashPassword, comparePassword } from "../services/passwordHash.js";
+import { createUser, getUserByEmail, updateUserLoginStatus, deleteUser } from "../services/user/userCRUD.js";
+import { createJWT, getJWTValue, RefreshToken } from "../services/tokens/jwtService.js";
+import { basicAuthenticationHandler } from "../services/basicAuthenticantionHandler.js";
+import { createSession, deleteSession, updateSession } from "../services/tokens/sessionCRUD.js";
+import { setResponse } from "../services/setResponse.js";
+import { database } from "../app.js";
+import { getAccessTokenValue, verifyRefreshTokenValidity } from "../services/tokens/getTokens.js";
+import { verifyAccessToken } from "../services/tokens/verifyToken.js";
 
 // MARK: Refresh Token Cookie
 function setRefreshTokenCookie(token: RefreshToken, response: ServerResponse) {

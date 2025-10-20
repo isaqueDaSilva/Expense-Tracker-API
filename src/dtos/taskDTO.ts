@@ -1,4 +1,4 @@
-import { UUID } from "../../../app.js";
+import { UUID } from "../app.js";
 
 export interface CreateTaskDTO {
     title: string;

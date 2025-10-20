@@ -1,5 +1,5 @@
-import { database } from "../../../../app.js";
-import type { CreateTaskDTO, ReadTaskDTO, UpdateTaskDTO } from "../../dto/taskDTO.js";
+import { database } from "../../app.js";
+import type { CreateTaskDTO, ReadTaskDTO, UpdateTaskDTO } from "../../dtos/taskDTO.js";
 
 export async function createTask(CreateTaskDTO: CreateTaskDTO, userID: string): Promise<ReadTaskDTO> {
     const fields = [];

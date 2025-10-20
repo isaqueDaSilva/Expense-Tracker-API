@@ -1,5 +1,5 @@
 import { NeonQueryPromise } from "@neondatabase/serverless";
-import { database } from "../../../../app.js";
+import { database } from "../../app.js";
 
 export function createSession(userID: string, accessTokenVerificationCode: string, refreshToken: string, refreshTokenID: string): NeonQueryPromise<false, false, Record<string, any>[]> {
     const newSession = `

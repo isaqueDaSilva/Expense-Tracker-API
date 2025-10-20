@@ -1,10 +1,10 @@
 import type { IncomingMessage, ServerResponse } from "http";
-import { decodeJSONBody } from "./services/jsonDecoder.js";
-import { decodeCreateTaskDTO, decodeTaskSearch, decodeUpdateTaskDTO } from "./services/tasks/decodeTaskDTO.js";
-import { createTask, deleteTask, getAllTasks, getAllTasksByCategory, getTasksByDate, getTaskByID, updateTask } from "./services/tasks/tasksCRUD.js";
-import { isPageValid } from "./services/isPageValid.js";
-import { setResponse } from "./services/setResponse.js";
-import { getAccessTokenValue } from "./services/tokens/getTokens.js";
+import { decodeJSONBody } from "../services/jsonDecoder.js";
+import { decodeCreateTaskDTO, decodeTaskSearch, decodeUpdateTaskDTO } from "../services/tasks/decodeTaskDTO.js";
+import { createTask, deleteTask, getAllTasks, getAllTasksByCategory, getTasksByDate, getTaskByID, updateTask } from "../services/tasks/tasksCRUD.js";
+import { isPageValid } from "../services/isPageValid.js";
+import { setResponse } from "../services/setResponse.js";
+import { getAccessTokenValue } from "../services/tokens/getTokens.js";
 
 // TODO: Add constraints to the same user cannot create two expenses with the same name.
 export async function createNewTask(request: IncomingMessage, response: ServerResponse) {

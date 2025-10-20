@@ -1,5 +1,5 @@
-import { database } from "../../../../app.js";
-import type { ReadCategoryDTO } from "../../dto/categoryDTO.js";
+import { database } from "../../app.js";
+import type { ReadCategoryDTO } from "../../dtos/categoryDTO.js";
 
 export async function createCategory(categoryTitle: string, userID: string): Promise<ReadCategoryDTO> {
     const newCategory = `

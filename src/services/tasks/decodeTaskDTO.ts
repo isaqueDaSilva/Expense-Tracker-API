@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { CreateTaskDTO, TaskSearch, UpdateTaskDTO } from '../../dto/taskDTO.js';
+import type { CreateTaskDTO, TaskSearch, UpdateTaskDTO } from '../../dtos/taskDTO.js';
 
 export function decodeCreateTaskDTO(jsonString: string): CreateTaskDTO {
     const parsed = JSON.parse(jsonString, (key, value) => {

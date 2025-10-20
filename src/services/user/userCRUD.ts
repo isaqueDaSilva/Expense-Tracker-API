@@ -1,6 +1,6 @@
 import { NeonQueryPromise } from "@neondatabase/serverless";
-import { database } from "../../../../app.js";
-import type { ReadFullUserDTO, ReadUserDTO } from "../../dto/userDTO.js";
+import { database } from "../../app.js";
+import type { ReadFullUserDTO, ReadUserDTO } from "../../dtos/userDTO.js";
 
 export async function createUser(email: string, username: string, hashedPassword: string): Promise<ReadUserDTO> {
     const newUser = `

@@ -1,4 +1,4 @@
-import { database } from "../../../../app.js";
+import { database } from "../../app.js";
 import { updateUserLoginStatus } from "../user/userCRUD.js";
 import { verifyJWT } from "./jwtService.js";
 import { deleteSession, isValidationCodeExist } from "./sessionCRUD.js";

@@ -1,8 +1,8 @@
 import { createServer } from "http";
-import { refreshToken, removeUser, signin, signout, signup, verifyAccessToken } from "./controllers/authenticationController.js";
-import { createNewCategory, deleteCategoryWithID, getCategories, getCategoryById, updateCategoryWithId } from "./controllers/categoryController.js";
-import { createNewTask, getAllTasksByDate, getTasks, getTasksByCategory, getTask, updateCurrentTask, deleteCurrentTask } from "./controllers/tasksController.js";
-import { RoutesHandler } from "./routesHandler.js";
+import { refreshToken, removeUser, signin, signout, signup, verifyAccessTokenFromRequest } from "../controllers/authenticationController.js";
+import { createNewCategory, deleteCategoryWithID, getCategories, getCategoryById, updateCategoryWithId } from "../controllers/categoryController.js";
+import { createNewTask, getAllTasksByDate, getTasks, getTasksByCategory, getTask, updateCurrentTask, deleteCurrentTask } from "../controllers/tasksController.js";
+import { RoutesHandler } from "../services/routesHandler.js";
 
 // GET: /
 RoutesHandler.getSharedInstance().addRoutes({ 
@@ -36,7 +36,7 @@ RoutesHandler.getSharedInstance().addRoutes({
   method: "GET",
   path: "/token/verify",
   handler: (req, res) => {
-    verifyAccessToken(req, res);
+    verifyAccessTokenFromRequest(req, res);
   }
 });
 
