@@ -1,6 +1,6 @@
 import { UUID } from "../app.js";
 
-export interface CreateTaskDTO {
+export interface CreateExpenseDTO {
     title: string;
     description?: string | undefined;
     value: number;
@@ -8,7 +8,7 @@ export interface CreateTaskDTO {
     category?: string | undefined;
 };
 
-export interface ReadTaskDTO {
+export interface ReadExpenseDTO {
     id: UUID;
     title: string;
     description?: string;
@@ -20,7 +20,7 @@ export interface ReadTaskDTO {
     updatedAt: string;
 };
 
-export interface UpdateTaskDTO {
+export interface UpdateExpenseDTO {
     title?: string | undefined;
     description?: string | undefined;
     value?: number | undefined;
@@ -28,7 +28,7 @@ export interface UpdateTaskDTO {
     category?: string | undefined;
 };
 
-export interface TaskSearch {
+export interface ExpenseSearch {
     initialDate: string;
     finalDate: string
 }

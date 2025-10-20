@@ -1,7 +1,7 @@
 import { createServer } from "http";
 import { refreshToken, removeUser, signin, signout, signup, verifyAccessTokenFromRequest } from "../controllers/authenticationController.js";
 import { createNewCategory, deleteCategoryWithID, getCategories, getCategoryById, updateCategoryWithId } from "../controllers/categoryController.js";
-import { createNewTask, getAllTasksByDate, getTasks, getTasksByCategory, getTask, updateCurrentTask, deleteCurrentTask } from "../controllers/tasksController.js";
+import { createNewExpenses, getAllExpensesByDate, getExpenses, getExpensesByCategory, getExpense, updateCurrentExpense, deleteCurrentExpense } from "../controllers/expensesController.js";
 import { RoutesHandler } from "../services/routesHandler.js";
 
 // GET: /
@@ -112,66 +112,66 @@ RoutesHandler.getSharedInstance().addRoutes({
   }
 });
 
-// POST: /task/create
+// POST: /expense/create
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "POST", 
-  path: "/task/create",
+  path: "/expense/create",
   handler: (req, res) => {
-    createNewTask(req, res);
+    createNewExpenses(req, res);
   }
 });
 
-// GET: /task/all/:page
+// GET: /expense/all/:page
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
-  path: "/task/all/:page",
+  path: "/expense/all/:page",
   handler: (req, res, parameters) => {
-    getTasks(req, res, parameters || { });
+    getExpenses(req, res, parameters || { });
   }
 });
 
-// GET: /task/all/:category/:page
+// GET: /expense/all/:category/:page
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
-  path: "/task/all/:category/:page",
+  path: "/expense/all/:category/:page",
   handler: (req, res, parameters) => {
-    getTasksByCategory(req, res, parameters || { });
+    getExpensesByCategory(req, res, parameters || { });
   }
 });
 
-// GET: /task/byDate/:page
+// GET: /expense/byDate/:page
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
-  path: "/task/byDate/:page",
+  path: "/expense/byDate/:page",
   handler: (req, res, parameters) => {
-    getAllTasksByDate(req, res, parameters || { });
+    getAllExpensesByDate(req, res, parameters || { });
   }
 });
 
-// GET: /task/get/:id
+// GET: /expense/get/:id
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
-  path: "/task/get/:id",
+  path: "/expense/get/:id",
   handler: (req, res, parameters) => {
-    getTask(req, res, parameters || { });
+    getExpense(req, res, parameters || { });
   }
 });
 
-// PATCH: /task/update/:id
+// PATCH: /expense/update/:id
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "PATCH", 
-  path: "/task/update/:id",
+  path: "/expense/update/:id",
   handler: (req, res, parameters) => {
-    updateCurrentTask(req, res, parameters || { });
+    updateCurrentExpense(req, res, parameters || { });
   }
 });
 
-// DELETE: /task/:id/delete
+// DELETE: /expense/:id/delete
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "DELETE", 
-  path: "/task/:id/delete",
+  path: "/expense/:id/delete",
   handler: (req, res, parameters) => {
-    deleteCurrentTask(req, res, parameters || { });
+    deleteCurrentExpense(req, res, parameters || { });
   }
 });
 

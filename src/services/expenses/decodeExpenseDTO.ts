@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import type { CreateTaskDTO, TaskSearch, UpdateTaskDTO } from '../../dtos/taskDTO.js';
+import type { CreateExpenseDTO, ExpenseSearch, UpdateExpenseDTO } from '../../dtos/expenseDTO.js';
 
-export function decodeCreateTaskDTO(jsonString: string): CreateTaskDTO {
+export function decodeCreateExpenseDTO(jsonString: string): CreateExpenseDTO {
     const parsed = JSON.parse(jsonString, (key, value) => {
         if (key === 'title' || key === 'description' || key === 'date' || key === 'category') {
             if (typeof value !== 'string') {
@@ -29,7 +29,7 @@ export function decodeCreateTaskDTO(jsonString: string): CreateTaskDTO {
     }).parse(parsed);
 };
 
-export function decodeUpdateTaskDTO(jsonString: string): UpdateTaskDTO {
+export function decodeUpdateExpenseDTO(jsonString: string): UpdateExpenseDTO {
     const parsed = JSON.parse(jsonString, (key, value) => {
         if (key === 'title' || key === 'description' || key === 'date' || key === 'category') {
             if (typeof value !== 'string') {
@@ -57,7 +57,7 @@ export function decodeUpdateTaskDTO(jsonString: string): UpdateTaskDTO {
     }).parse(parsed);
 };
 
-export function decodeTaskSearch(jsonString: string): TaskSearch {
+export function decodeExpenseSearch(jsonString: string): ExpenseSearch {
     const parsed = JSON.parse(jsonString, (key, value) => {
         if (key === 'initialDate' || key === 'finalDate') {
             if (typeof value !== 'string') {
