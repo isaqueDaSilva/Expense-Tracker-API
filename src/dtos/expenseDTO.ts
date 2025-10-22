@@ -27,8 +27,3 @@ export interface UpdateExpenseDTO {
     date?: string | undefined;
     category?: string | undefined;
 };
-
-export interface ExpenseSearch {
-    initialDate: string;
-    finalDate: string
-}
