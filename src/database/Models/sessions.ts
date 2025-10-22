@@ -5,7 +5,7 @@ export const sessionsTableSchema = `
         at_verification_code TEXT UNIQUE NOT NULL,
         refresh_token_id TEXT UNIQUE NOT NULL
         refresh_token TEXT UNIQUE NOT NULL,
-        created_at DATE NOT NULL DEFAULT CURRENT_DATE,
+        created_at DATE DEFAULT CURRENT_DATE NOT NULL,
         updated_at DATE DEFAULT CURRENT_DATE NOT NULL
     );
 `;
