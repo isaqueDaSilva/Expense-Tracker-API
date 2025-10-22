@@ -6,6 +6,6 @@ export const sessionsTableSchema = `
         refresh_token_id TEXT UNIQUE NOT NULL
         refresh_token TEXT UNIQUE NOT NULL,
         created_at DATE DEFAULT CURRENT_DATE NOT NULL,
-        updated_at DATE DEFAULT CURRENT_DATE NOT NULL
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 `;
