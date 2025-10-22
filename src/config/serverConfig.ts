@@ -139,10 +139,10 @@ RoutesHandler.getSharedInstance().addRoutes({
   }
 });
 
-// GET: /expense/byDate/:page
+// GET: /expense/byDate/:dateRange/:page
 RoutesHandler.getSharedInstance().addRoutes({ 
   method: "GET", 
-  path: "/expense/byDate/:page",
+  path: "/expense/byDate/:dateRange/:page",
   handler: (req, res, parameters) => {
     getAllExpensesByDate(req, res, parameters || { });
   }
