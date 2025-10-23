@@ -111,3 +111,14 @@ export function deleteSession(
   const values = [refreshTokenID];
   return database.query(deleteSession, values);
 }
+
+export async function deleteAllExpiredSessions(): Promise<number> {
+  const deleteExpiredSessions = `
+        DELETE FROM sessions
+        WHERE updated_at < CURRENT_TIMESTAMP - INTERVAL '1 days'
+        RETURNING id;
+    `;
+
+  const result = await database.query(deleteExpiredSessions);
+  return result.length;
+}
