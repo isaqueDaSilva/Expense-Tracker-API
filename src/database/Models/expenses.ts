@@ -1,4 +1,4 @@
-export const tasksTableSchema = `
+export const expensesTableSchema = `
     CREATE TABLE IF NOT EXISTS expenses (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid() UNIQUE NOT NULL,
         title VARCHAR(100) NOT NULL CHECK (char_length(title) <= 100),
