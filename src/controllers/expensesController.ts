@@ -15,7 +15,7 @@ import {
 } from "../services/expenses/expenseCRUD.js";
 import { isPageValid } from "../services/isPageValid.js";
 import { setResponse } from "../services/setResponse.js";
-import { getAccessTokenValue } from "../services/tokens/getTokens.js";
+import { getAccessTokenValue } from "../services/jwt/getTokens.js";
 import { getPreviousDate } from "../services/getPreviousDate.js";
 
 // TODO: Add constraints to the same user cannot create two expenses with the same name.
