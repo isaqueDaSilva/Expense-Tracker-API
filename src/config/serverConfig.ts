@@ -197,10 +197,10 @@ RoutesHandler.getSharedInstance().addRoutes({
   },
 });
 
-// DELETE: /auth/cleanup-expired-sessions
+// DELETE: /auth/cleanupExpiredSessions
 RoutesHandler.getSharedInstance().addRoutes({
   method: "DELETE",
-  path: "/auth/cleanup-expired-sessions",
+  path: "/auth/cleanupExpiredSessions",
   handler: (req, res) => {
     performCleanupOfExpiredSessions(req, res);
   },
