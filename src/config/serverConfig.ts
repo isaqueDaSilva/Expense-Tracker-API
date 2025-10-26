@@ -207,6 +207,18 @@ RoutesHandler.getSharedInstance().addRoutes({
 });
 
 export const server = createServer((req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Max-Age', 86400);
+  res.setHeader("Access-Control-Allow-Credentials", "true")
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
   if (!req.url || !req.method) {
     res.statusCode = 400;
     return res.end("Bad Request");
