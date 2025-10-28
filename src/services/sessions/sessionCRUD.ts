@@ -1,12 +1,12 @@
 import { NeonQueryPromise } from "@neondatabase/serverless";
 import { database } from "../../app.js";
 
-export function createSession(
+export async function createSession(
   userID: string,
   accessTokenVerificationCode: string,
   refreshToken: string,
   refreshTokenID: string
-): NeonQueryPromise<false, false, Record<string, any>[]> {
+) {
   const newSession = `
         INSERT INTO sessions(user_id, at_verification_code, refresh_token_id, refresh_token)
         VALUES ($1, $2, $3, $4)
@@ -19,19 +19,19 @@ export function createSession(
     refreshTokenID,
     refreshToken,
   ];
-  return database.query(newSession, values);
+  await database.query(newSession, values);
 }
 
 export async function isValidationCodeExist(
   userID: string,
   verificationCode: string
 ): Promise<boolean> {
+
   const session = `
-        SELECT (user_id, at_verification_code) 
-        COUNT (at_verification_code) 
-        FROM sessions
-        WHERE user_id = $1 AND at_verification_code = $2;
-    `;
+    SELECT COUNT (at_verification_code) 
+    FROM sessions
+    WHERE user_id = $1 AND at_verification_code = $2;
+  `;
 
   const values = [userID, verificationCode];
   const result = await database.query(session, values);
@@ -56,15 +56,15 @@ export async function isValidationCodeExist(
 
 export async function getRefreshToken(refreshTokenID: string): Promise<string> {
   const session = `
-        SELECT (refresh_token) FROM sessions
-        WHERE refresh_token_id = $1;
-    `;
+      SELECT refresh_token FROM sessions
+      WHERE refresh_token_id = $1;
+  `;
 
   const values = [refreshTokenID];
   const result = await database.query(session, values);
 
   if (result.length == 1) {
-    const refreshToken = result[0];
+    const refreshToken = result[0].refresh_token;
 
     if (typeof refreshToken === "string") {
       return refreshToken as string;
@@ -114,10 +114,10 @@ export function deleteSession(
 
 export async function deleteAllExpiredSessions(): Promise<number> {
   const deleteExpiredSessions = `
-        DELETE FROM sessions
-        WHERE updated_at < CURRENT_TIMESTAMP - INTERVAL '1 days'
-        RETURNING id;
-    `;
+    DELETE FROM sessions
+    WHERE updated_at < CURRENT_TIMESTAMP - INTERVAL '1 days'
+    RETURNING id;
+  `;
 
   const result = await database.query(deleteExpiredSessions);
   return result.length;
