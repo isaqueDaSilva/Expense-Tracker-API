@@ -1,5 +1,3 @@
-import { database } from "../../app.js";
-import { updateUserLoginStatus } from "../user/userCRUD.js";
 import { verifyJWT } from "../jwt/jwtService.js";
 import {
   deleteSession,
@@ -39,10 +37,7 @@ export async function isRefreshTokenValid(
 
     if (error) {
       console.log("Refresh token is invalid to be used. Error:", error);
-      await database.transaction([
-        deleteSession(refreshTokenID),
-        updateUserLoginStatus(userID, false),
-      ]);
+      await deleteSession(refreshTokenID);
     }
     return;
   } catch (error) {
