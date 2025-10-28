@@ -5,7 +5,6 @@ import { hashPassword, comparePassword } from "../services/passwordHash.js";
 import {
   createUser,
   getUserByEmail,
-  updateUserLoginStatus,
   deleteUser,
 } from "../services/user/userCRUD.js";
 import {
@@ -30,22 +29,26 @@ import { verifyAccessToken } from "../services/jwt/verifyToken.js";
 
 // MARK: Refresh Token Cookie
 function setRefreshTokenCookie(token: RefreshToken, response: ServerResponse) {
-  const cookie = `refresh_token_id=${token.id}; HttpOnly; Secure; SameSite=Strict; Path=/token/refresh; Expires=${token.expiresOn}`;
-  response.setHeader("Set-Cookie", cookie);
-}
+  const refreshCookie = `refresh_token_id=${token.id}; HttpOnly; Secure; SameSite=None; Domain=${process.env.HOSTNAME}; Path=/token/refresh; Expires=${token.expiresOn}`;
+  const signoutCookie = `refresh_token_id=${token.id}; HttpOnly; Secure; SameSite=None; Domain=${process.env.HOSTNAME}; Path=/auth/signout; Expires=${token.expiresOn}`;
+  response.setHeader("Set-Cookie", [refreshCookie, signoutCookie]);
+};
 
 function getRefreshTokenID(request: IncomingMessage): string | undefined {
-  const cookieValue = request.headers.cookie || "";
-  return cookieValue
+  const cookieValue = request.headers["access-control-allow-credentials"] || request.headers.cookie || "";
+  const refreshTokenID = cookieValue
     .split("; ")
     .map((c) => c.trim().split("="))
     .find(([name]) => name === "refresh_token_id")?.[1];
-}
+
+  return refreshTokenID;
+};
 
 function clearCookie(response: ServerResponse) {
-  const cookie = `refresh_token_id=; HttpOnly; Secure; SameSite=Strict; Path=/token/refresh; Expires=`;
-  response.setHeader("Set-Cookie", cookie);
-}
+  const refreshCookie = `refresh_token_id=; HttpOnly; Secure; SameSite=None; Domain=${process.env.HOSTNAME}; Path=/token/refresh; Expires=`;
+  const signoutCookie = `refresh_token_id=; HttpOnly; Secure; SameSite=None; Domain=${process.env.HOSTNAME}; Path=/auth/signout; Expires=`;
+  response.setHeader("Set-Cookie", [refreshCookie, signoutCookie]);
+};
 
 async function getPairOfTokens(
   request: IncomingMessage
@@ -114,18 +117,15 @@ export async function signin(
 
     user.passwordhash = ""; // Clear the password hash from memory as soon as possible
 
-    if (!user.isLogged && isPasswordValid) {
+    if (!user.hasSession && isPasswordValid) {
       const newPairOfToken = createJWT(user.id);
 
-      database.transaction([
-        createSession(
-          user.id,
-          newPairOfToken.accessToken.verificationCode,
-          newPairOfToken.refreshToken.token,
-          newPairOfToken.refreshToken.id
-        ),
-        updateUserLoginStatus(user.id, true),
-      ]);
+      await createSession(
+        user.id,
+        newPairOfToken.accessToken.verificationCode,
+        newPairOfToken.refreshToken.token,
+        newPairOfToken.refreshToken.id
+      )
 
       const responseJSON = {
         accessToken: newPairOfToken.accessToken.token,
@@ -157,10 +157,7 @@ export async function signout(
   try {
     const tokens = await getPairOfTokens(request);
 
-    await database.transaction([
-      updateUserLoginStatus(tokens.userID, false),
-      deleteSession(tokens.refreshTokenID),
-    ]);
+    await deleteSession(tokens.refreshTokenID);
 
     clearCookie(response);
     setResponse(response, 204, { message: "User signed out successfully" });
