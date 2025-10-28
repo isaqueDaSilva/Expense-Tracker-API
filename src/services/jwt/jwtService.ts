@@ -56,7 +56,7 @@ function createRefreshToken(userID: string, issuedAt: Date): RefreshToken {
   return {
     id: id,
     token: refreshToken,
-    expiresOn: refreshTokenExpirationDate.toISOString(),
+    expiresOn: refreshTokenExpirationDate.toUTCString(),
   };
 }
 
