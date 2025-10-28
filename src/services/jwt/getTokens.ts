@@ -15,7 +15,7 @@ export async function getAccessTokenValue(
   return { accessToken: accessTokenValue, userID: userID };
 }
 
-export async function verifyRefreshTokenValidity(refreshTokenID: string) {
+export async function verifyRefreshTokenValidity(refreshTokenID: string): Promise<string> {
   const refreshTokenValue = await getRefreshToken(refreshTokenID);
 
   try {
