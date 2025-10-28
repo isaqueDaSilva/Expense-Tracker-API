@@ -18,7 +18,7 @@ export interface ReadFullUserDTO {
     email: string;
     username: string;
     passwordhash: string;
-    isLogged: boolean;
+    hasSession: boolean;
     lastLoggedDate: Date;
     createdAt: Date;
 };
