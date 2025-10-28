@@ -10,7 +10,11 @@ import {
   clothing,
   health,
 } from "../models/category.js";
-import { sessionsTableSchema } from "../models/sessions.js";
+import {
+  createUpdateLastLoggedDateOnUserTableTrigger,
+  sessionsTableSchema,
+  updateLastLoggedDateOnUserTableFuncition,
+} from "../models/sessions.js";
 import { databaseConfig } from "../../config/databaseConfig.js";
 
 async function databaseMigration(database: NeonQueryFunction<false, false>) {
@@ -25,6 +29,8 @@ async function databaseMigration(database: NeonQueryFunction<false, false>) {
     database.query(health),
     database.query(expensesTableSchema),
     database.query(sessionsTableSchema),
+    database.query(updateLastLoggedDateOnUserTableFuncition),
+    database.query(createUpdateLastLoggedDateOnUserTableTrigger)
   ]);
 }
 

@@ -9,3 +9,22 @@ export const sessionsTableSchema = `
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 `;
+
+export const updateLastLoggedDateOnUserTableFuncition = `
+    CREATE OR REPLACE FUNCTION update_last_logged_date()
+    RETURNS TRIGGER AS $$
+    BEGIN
+        UPDATE users
+        SET last_logged_date = CURRENT_TIMESTAMP
+        WHERE id = NEW.user_id;
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+`;
+
+export const createUpdateLastLoggedDateOnUserTableTrigger = `
+    CREATE TRIGGER trigger_update_last_logged_date
+    AFTER INSERT ON sessions
+    FOR EACH ROW
+    EXECUTE FUNCTION update_last_logged_date();
+`
