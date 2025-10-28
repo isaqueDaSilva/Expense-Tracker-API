@@ -26,7 +26,8 @@ export async function createUser(email: string, username: string, hashedPassword
 
 export async function getUserByEmail(email: string): Promise<ReadFullUserDTO> {
     const user = `
-        SELECT id, email, username, password_hash AS passwordHash, is_logged AS "isLogged", last_logged_date AS "lastLoggedDate", created_at AS "createdAt"
+        SELECT id, email, username, password_hash AS passwordHash, last_logged_date AS "lastLoggedDate", created_at AS "createdAt",
+        EXISTS (SELECT 1 FROM sessions WHERE user_id = users.id) AS "hasSession"
         FROM users
         WHERE email = $1;
     `;
@@ -48,17 +49,6 @@ export async function getUserByEmail(email: string): Promise<ReadFullUserDTO> {
         throw new Error("No user was founded");
     }
 };
-
-export function updateUserLoginStatus(userID: string, isLogged: boolean): NeonQueryPromise<false, false, Record<string, any>[]> {
-    const updateStatus = `
-        UPDATE users
-        SET is_logged = $1, last_logged_date = $2
-        WHERE id = $3;
-    `;
-
-    const values = [isLogged, new Date().toISOString(), userID];
-    return database.query(updateStatus, values);
-}
 
 export function deleteUser(userID: string): NeonQueryPromise<false, false, Record<string, any>[]> {
     const deleteUserQuery = `
